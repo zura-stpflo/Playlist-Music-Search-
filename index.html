@@ -3,171 +3,202 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Zura Music — Dashboard (Spotify-like)</title>
-<meta name="description" content="Zura Music — Spotify-like dashboard (search YouTube).">
-<!-- Minimal modern font -->
+<title>Zura Music — Spotify-like Dashboard (Final)</title>
+<meta name="description" content="Zura Music — Spotify-like dashboard (YouTube search & player)" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
   :root{
-    --bg:#0f0f10; --panel:#151515; --muted:#9a9a9a; --accent:#1db954; --card:#171717; --glass: rgba(255,255,255,0.04);
-    --radius:14px; --gap:14px; --text:#eaeaea;
+    --bg:#071017; --panel:#0f1416; --muted:#9aa3a8; --accent:#1db954; --card:#0b0f10; --glass: rgba(255,255,255,0.03);
+    --radius:14px; --gap:14px; --text:#eaf0f1; --glass-2: rgba(255,255,255,0.02);
+    --danger:#e85b5b; --success:#2bb673;
   }
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;color:var(--text);background:
-    linear-gradient(180deg,#07111a 0%, #071017 50%, #0f0f10 100%);-webkit-font-smoothing:antialiased}
-  /* app layout */
-  .app{display:grid;grid-template-columns:260px 1fr;grid-template-rows:1fr auto;min-height:100vh;gap:0}
-  /* SIDEBAR */
-  .sidebar{padding:20px;background:linear-gradient(180deg,#000 0%, #0b0b0b 100%);border-right:1px solid rgba(255,255,255,0.03)}
-  .brand{display:flex;align-items:center;gap:12px;margin-bottom:16px}
-  .logo-mark{width:46px;height:46px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),#12a84a);color:#001; font-weight:700}
-  .brand h1{font-size:18px;letter-spacing:0.2px;margin:0}
-  .nav{margin-top:8px}
-  .nav button{display:flex;align-items:center;gap:10px;width:100%;background:transparent;border:none;padding:10px;border-radius:10px;color:var(--text);cursor:pointer;font-weight:600}
-  .nav button:hover{background:rgba(255,255,255,0.02)}
-  .nav button.active{background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02)}
-  .sidebar .small{color:var(--muted);font-size:13px;margin-top:18px}
-  .artist-list{margin-top:10px;display:flex;flex-direction:column;gap:8px}
-  .artist-chip{padding:8px 10px;background:var(--glass);border-radius:10px;font-size:13px;color:var(--text);cursor:pointer}
-  .theme-switch{margin-top:18px;padding:10px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.03);cursor:pointer}
-  /* CONTENT */
-  .content{padding:22px;overflow:auto}
-  .top-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
-  .search-box{display:flex;gap:8px;max-width:720px;width:100%}
-  .search-box input{flex:1;padding:12px 14px;border-radius:999px;border:none;background:rgba(255,255,255,0.02);color:var(--text);outline:none}
-  .search-box button{padding:10px 14px;border-radius:999px;border:none;background:var(--accent);font-weight:700;color:#001;cursor:pointer}
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;color:var(--text);background:linear-gradient(180deg,#07111a 0%, #071017 50%, #071018 100%);-webkit-font-smoothing:antialiased}
+  .app{display:grid;grid-template-columns:260px 1fr 360px;grid-template-rows:1fr auto;min-height:100vh;gap:12px;padding:12px}
+  .sidebar{padding:20px;background:linear-gradient(180deg,#040606 0%, #071011 100%);border-right:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;gap:12px;border-radius:12px}
+  .brand{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+  .logo-mark{width:46px;height:46px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),#12a84a);color:#001;font-weight:700}
+  .brand h1{font-size:16px;margin:0;letter-spacing:0.6px}
+  .nav{margin-top:6px;display:flex;flex-direction:column;gap:8px}
+  .nav button{display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:none;padding:12px;border-radius:10px;color:var(--text);cursor:pointer;font-weight:600;text-align:left;transition:all .12s}
+  .nav button i{width:20px;text-align:center}
+  .nav button:hover{background:rgba(255,255,255,0.02);transform:translateX(4px)}
+  .nav button.active{background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02)}
+  .small{color:var(--muted);font-size:13px;margin-top:8px}
+  .artist-list{margin-top:8px;display:flex;flex-direction:column;gap:8px}
+  .artist-chip{padding:8px 10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:999px;font-size:13px;color:var(--text);cursor:pointer;border:1px solid rgba(255,255,255,0.01)}
+  .theme-switch{margin-top:auto;padding:10px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.03);cursor:pointer;display:flex;align-items:center;gap:8px;justify-content:center}
+  /* MAIN CONTENT */
+  .content{padding:20px;overflow:auto;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);border-radius:12px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .search-area{display:flex;gap:8px;max-width:960px;width:100%;align-items:center}
+  .search-area input{flex:1;padding:12px 14px;border-radius:999px;border:none;background:rgba(255,255,255,0.02);color:var(--text);outline:none;font-weight:600}
+  .search-area button{padding:10px 14px;border-radius:999px;border:none;background:var(--accent);font-weight:700;color:#001;cursor:pointer}
+  .toggles{display:flex;gap:8px;align-items:center}
   .section-title{margin-top:18px;font-size:18px;font-weight:700}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-top:14px}
-  /* CARD (no images) */
-  .card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px;transition:transform .14s, box-shadow .14s;cursor:pointer}
-  .card:hover{transform:translateY(-6px);box-shadow:0 10px 30px rgba(0,0,0,0.45)}
-  .thumb{height:110px;border-radius:8px;display:grid;place-items:center;background:
-    linear-gradient(135deg,#0b0b0b 0%, rgba(255,255,255,0.015) 100%);border:1px solid rgba(255,255,255,0.02)}
-  .thumb svg{width:56px;height:56px;opacity:0.9}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-top:14px}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:8px;transition:transform .12s,box-shadow .12s;cursor:pointer;position:relative}
+  .card.playing { box-shadow: 0 8px 30px rgba(29,185,84,0.14); border: 1px solid rgba(29,185,84,0.12); }
+  .card:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(0,0,0,0.55)}
+  .thumb{height:120px;border-radius:10px;overflow:hidden;background:#000;display:block}
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block}
   .meta{display:flex;flex-direction:column;gap:4px}
-  .title{font-weight:700;font-size:14px}
+  .title{font-weight:700;font-size:14px;line-height:1.2}
   .sub{font-size:13px;color:var(--muted);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
-  .card .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
-  .btn{appearance:none;border:none;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,0.03);color:var(--text);cursor:pointer;font-weight:600}
+  .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .btn{appearance:none;border:none;padding:8px 12px;border-radius:8px;background:rgba(255,255,255,0.03);color:var(--text);cursor:pointer;font-weight:600}
   .btn.primary{background:var(--accent);color:#001}
-  /* Now Playing (footer) */
-  .player{grid-column:1/-1;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-top:1px solid rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:space-between;padding:12px 20px;position:sticky;bottom:0}
+  .tiny{padding:6px 8px;border-radius:6px;font-size:13px}
+  /* player */
+  .player{grid-column:1/-1;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-top:1px solid rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:space-between;padding:12px 20px;position:sticky;bottom:0;backdrop-filter: blur(6px);border-radius:12px}
   .now-left{display:flex;gap:12px;align-items:center}
-  .now-left .mini{width:56px;height:56px;border-radius:8px;display:grid;place-items:center;background:linear-gradient(135deg,#081010, rgba(255,255,255,0.01));}
+  .cover{width:64px;height:64px;border-radius:10px;overflow:hidden;background:#000;display:grid;place-items:center;transition:transform .6s linear}
+  .cover.playing{animation: rotation 6s linear infinite}
+  @keyframes rotation { from { transform: rotate(0deg) } to { transform: rotate(360deg) } }
+  .cover img{width:100%;height:100%;object-fit:cover;display:block}
   .now-meta{display:flex;flex-direction:column}
   .now-meta .t{font-weight:700}
   .controls{display:flex;align-items:center;gap:8px}
   .controls button{background:transparent;border:none;color:var(--text);cursor:pointer;font-size:18px;padding:8px;border-radius:8px}
-  .slider{width:420px;display:flex;gap:10px;align-items:center}
-  .slider input[type=range]{width:280px}
+  .slider{display:flex;gap:10px;align-items:center}
+  .slider input[type=range]{width:260px}
   .muted{color:var(--muted);font-size:13px}
-  /* Queue drawer */
-  .drawer{position:fixed;right:20px;bottom:96px;width:360px;background:linear-gradient(180deg,#0f0f10, #0b0b0b);border-radius:12px;padding:12px;box-shadow:0 12px 40px rgba(0,0,0,0.6)}
-  .drawer h4{margin:0 0 8px 0}
+  /* right panel */
+  .right-panel{width:360px;padding:20px;border-left:1px solid rgba(255,255,255,0.02);background:linear-gradient(180deg,transparent,rgba(255,255,255,0.01));border-radius:12px}
+  .lyrics{white-space:pre-wrap;max-height:320px;overflow:auto;padding:10px;background:rgba(255,255,255,0.01);border-radius:8px}
+  /* drawer/modal */
+  .modal-back{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;place-items:center;z-index:60}
+  .modal{background:var(--panel);padding:18px;border-radius:12px;width:520px;max-width:96%}
+  .drawer{position:fixed;right:20px;bottom:96px;width:360px;background:linear-gradient(180deg,#0f0f10,#0b0b0b);border-radius:12px;padding:12px;box-shadow:0 12px 40px rgba(0,0,0,0.6);z-index:50}
   .queue-list{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow:auto;padding-right:6px}
-  .q-item{display:flex;gap:10px;align-items:center;padding:8px;border-radius:8px;background:rgba(255,255,255,0.01)}
-  .q-item .dot{width:40px;height:40px;border-radius:6px;display:grid;place-items:center;background:linear-gradient(135deg,#081010, rgba(255,255,255,0.01))}
+  .q-item{display:flex;gap:10px;align-items:center;padding:8px;border-radius:8px;background:rgba(255,255,255,0.01);cursor:grab}
+  .q-item.dragging{opacity:0.6}
+  .q-item .handle{width:32px;height:32px;border-radius:6px;display:grid;place-items:center;background:rgba(255,255,255,0.02);margin-right:8px}
+  .dot{width:44px;height:44px;border-radius:8px;display:grid;place-items:center;background:linear-gradient(135deg,#081010, rgba(255,255,255,0.01))}
+  /* animated bars */
+  .bars{display:flex;gap:3px;align-items:end;height:26px}
+  .bar{width:4px;height:6px;background:linear-gradient(180deg,#1db954,#12a84a);animation:bar 800ms infinite ease-in-out;animation-play-state:paused}
+  .bar:nth-child(2){animation-delay:100ms}
+  .bar:nth-child(3){animation-delay:200ms}
+  .bar:nth-child(4){animation-delay:300ms}
+  .playing .bar{animation-play-state:running}
+  @keyframes bar{0%{height:6px}50%{height:24px}100%{height:6px}}
+  /* confirmation banner */
+  .confirm-banner{position:fixed;left:50%;transform:translateX(-50%);top:14px;background:linear-gradient(180deg,#0b1112,#071011);border-radius:12px;padding:12px 14px;border:1px solid rgba(255,255,255,0.04);display:none;z-index:120;box-shadow:0 8px 30px rgba(0,0,0,0.5)}
+  .confirm-actions{display:flex;gap:8px;margin-top:10px}
+  .btn.red{background:var(--danger);color:#fff}
+  .btn.green{background:var(--success);color:#fff}
   /* responsive */
-  @media (max-width: 980px){ .app{grid-template-columns:80px 1fr} .sidebar{padding:12px} .player{padding:10px} .slider{display:none} }
-  @media (max-width: 640px){
-    .app{grid-template-columns:1fr;grid-template-rows:auto 1fr auto}
-    .sidebar{display:flex;flex-direction:row;gap:12px;align-items:center;padding:12px}
-    .content{padding:12px}
-    .grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
-    .player{padding:8px}
-  }
-
-  /* Light mode */
-  body.light{--bg:#f5f6f8;--panel:#fff;--text:#071018;--muted:#6b6f76;--card:#ffffff;--glass: rgba(0,0,0,0.03)}
-  body.light .card{background:var(--card)}
-  /* modal */
-  .modal-back{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;place-items:center}
-  .modal{background:var(--panel);padding:18px;border-radius:10px;width:420px;max-width:92%}
-  .modal h3{margin:0 0 8px 0}
-  .link{color:var(--accent);font-weight:700;cursor:pointer}
+  @media (max-width:1100px){ .app{grid-template-columns:80px 1fr;grid-template-rows:1fr auto} .right-panel{display:none} .slider input[type=range]{width:160px} }
+  @media (max-width:640px){ .app{grid-template-columns:1fr;grid-template-rows:auto 1fr auto} .sidebar{display:flex;flex-direction:row;align-items:center;gap:12px;padding:12px} .player{padding:8px} .grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))} .right-panel{display:none} .search-area input{padding:10px} }
+  /* light mode */
+  body.light{--bg:#f5f6f8;--panel:#fff;--text:#071018;--muted:#6b6f76;--card:#fff;--glass: rgba(0,0,0,0.03)}
+  .muted-center{color:var(--muted);padding:20px;text-align:center}
 </style>
 </head>
 <body>
-<div class="app" id="appRoot">
-  <!-- SIDEBAR -->
-  <aside class="sidebar" aria-label="Sidebar">
-    <div class="brand">
-      <div class="logo-mark" aria-hidden>
-        <!-- simple music note SVG -->
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="#001">
-          <path d="M9 17a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm0 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2zM19 4v10.5A3.5 3.5 0 0 1 15.5 18c-.2 0-.4 0-.6-.05A3.5 3.5 0 0 1 11 14.5V7h6V4h2z"></path>
-        </svg>
-      </div>
-      <h1>ZURA MUSIC</h1>
-    </div>
-
-    <nav class="nav" role="navigation" aria-label="Main">
-      <button class="nav-btn active" data-page="home">🏠 Beranda</button>
-      <button class="nav-btn" data-page="search">🔎 Pencarian</button>
-      <button class="nav-btn" data-page="favorites">❤️ Favorit</button>
-      <button class="nav-btn" data-page="queue">🎵 Queue</button>
-    </nav>
-
-    <div class="small">Penyanyi Favorit</div>
-    <div class="artist-list" id="favArtists"></div>
-
-    <button class="theme-switch" id="themeToggle">Toggle Mode</button>
-  </aside>
-
-  <!-- CONTENT -->
-  <main class="content" id="content">
-    <div class="top-row">
-      <div style="flex:1;max-width:880px">
-        <div style="display:flex;align-items:center;gap:12px">
-          <div style="font-weight:700;font-size:18px">Dashboard Musik</div>
-          <div class="muted" id="subtitle">Mencari di YouTube (API: nvidiabotz)</div>
+  <div class="app" id="app">
+    <!-- Sidebar -->
+    <aside class="sidebar" role="navigation" aria-label="Sidebar">
+      <div class="brand">
+        <div class="logo-mark" aria-hidden>
+          <i class="fas fa-music" style="color:#001;font-size:18px"></i>
         </div>
+        <h1>ZURA MUSIC</h1>
+      </div>
 
-        <div style="margin-top:12px" class="search-box">
-          <div style="display:flex;gap:8px;width:100%">
-            <input id="searchInput" placeholder="Cari lagu, artis, atau judul — tekan Enter atau klik Cari">
-            <button id="searchBtn">Cari</button>
-            <button id="shuffleBtn" class="btn">🔀 Random</button>
+      <nav class="nav" aria-label="Main nav">
+        <button class="nav-btn active" data-page="home"><i class="fas fa-home"></i>Beranda</button>
+        <button class="nav-btn" data-page="search"><i class="fas fa-search"></i>Pencarian</button>
+        <button class="nav-btn" data-page="playlists"><i class="fas fa-folder-open"></i>Playlist</button>
+        <button class="nav-btn" data-page="favorites"><i class="fas fa-heart"></i>Favorit</button>
+        <button class="nav-btn" data-page="queue"><i class="fas fa-list"></i>Antrian</button>
+      </nav>
+
+      <div class="small">Penyanyi Favorit</div>
+      <div class="artist-list" id="favArtists" aria-live="polite"></div>
+
+      <button class="theme-switch" id="themeToggle" title="Toggle theme"><i class="fas fa-adjust"></i><span style="margin-left:8px">Mode</span></button>
+    </aside>
+
+    <!-- Main content -->
+    <main class="content" id="content">
+      <div class="topbar">
+        <div style="flex:1;max-width:980px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="font-weight:700;font-size:18px">Dashboard Musik</div>
+            <div class="muted" id="subtitle">Mencari di YouTube (API: nvidiabotz)</div>
+          </div>
+          <div style="margin-top:12px" class="search-area" role="search">
+            <input id="searchInput" placeholder="Cari lagu, artis, atau judul — tekan Enter" aria-label="Cari lagu">
+            <button id="searchBtn" title="Search"><i class="fas fa-search"></i></button>
+            <button id="shuffleBtn" class="btn" title="Random recommendations"><i class="fas fa-dice"></i></button>
+            <button id="createPlaylistBtn" class="btn" title="Buat playlist"><i class="fas fa-plus"></i> Playlist</button>
           </div>
         </div>
+
+        <div class="toggles" aria-hidden>
+          <div class="muted">Pengaturan</div>
+          <button id="openSettings" class="btn tiny" title="Settings"><i class="fas fa-cog"></i></button>
+          <button id="miniQueueBtn" class="btn" title="Toggle queue"><i class="fas fa-list"></i></button>
+        </div>
       </div>
 
-      <div style="display:flex;gap:10px;align-items:center">
-        <div class="muted">Mode</div>
-        <button id="miniQueueBtn" class="btn">📃 Queue</button>
+      <!-- Views -->
+      <section id="view-home" class="view">
+        <div class="section-title">Rekomendasi Untukmu</div>
+        <div id="homeGrid" class="grid" aria-live="polite"></div>
+      </section>
+
+      <section id="view-search" class="view" style="display:none">
+        <div class="section-title">Hasil Pencarian</div>
+        <div id="searchGrid" class="grid"></div>
+      </section>
+
+      <section id="view-playlists" class="view" style="display:none">
+        <div class="section-title">Playlist Saya</div>
+        <div id="playlistsGrid" class="grid"></div>
+      </section>
+
+      <section id="view-favorites" class="view" style="display:none">
+        <div class="section-title">Favorit</div>
+        <div id="favGrid" class="grid"></div>
+      </section>
+
+      <section id="view-queue" class="view" style="display:none">
+        <div class="section-title">Antrian</div>
+        <div id="queueGrid" class="grid"></div>
+      </section>
+    </main>
+
+    <!-- Right panel: lyrics & player mini-info -->
+    <aside class="right-panel" id="rightPanel" aria-live="polite">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <div style="flex:1">
+          <div style="font-weight:700">Sekarang Diputar</div>
+          <div class="muted" id="nowSmall">—</div>
+        </div>
+        <div class="bars" id="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
       </div>
-    </div>
 
-    <!-- VIEWS -->
-    <section id="view-home" class="view">
-      <div class="section-title">Rekomendasi</div>
-      <div id="homeGrid" class="grid" aria-live="polite"></div>
-    </section>
+      <div style="margin-top:8px">
+        <div style="font-weight:700">Lirik</div>
+        <div id="lyrics" class="lyrics muted">Pilih lagu dan klik 'Putar' untuk mencoba menampilkan lirik (jika tersedia).</div>
+      </div>
 
-    <section id="view-search" class="view" style="display:none">
-      <div class="section-title">Hasil Pencarian</div>
-      <div id="searchGrid" class="grid"></div>
-    </section>
+      <div style="margin-top:16px">
+        <div style="font-weight:700">Informasi & Pengaturan Cepat</div>
+        <div class="muted" style="margin-top:8px">Autoplay, volume default, tema, dsb. Bisa diubah di Settings.</div>
+      </div>
+    </aside>
+  </div>
 
-    <section id="view-favorites" class="view" style="display:none">
-      <div class="section-title">Playlist Favorit</div>
-      <div id="favGrid" class="grid"></div>
-    </section>
-
-    <section id="view-queue" class="view" style="display:none">
-      <div class="section-title">Queue</div>
-      <div id="queueGrid" class="grid"></div>
-    </section>
-  </main>
-
-  <!-- PLAYER -->
+  <!-- Player footer -->
   <div class="player" role="region" aria-label="Now playing">
     <div class="now-left">
-      <div class="mini" id="coverBox" aria-hidden>
-        <!-- SVG cover placeholder (no image files used) -->
-        <svg viewBox="0 0 100 100" width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="100" height="100" rx="8" fill="#0b0b0b"/>
-          <path d="M30 30v40l30-20V30z" fill="#1db954"/>
-        </svg>
+      <div class="cover" id="coverBox" aria-hidden>
+        <img id="coverImg" src="" alt="cover" />
       </div>
       <div class="now-meta">
         <div class="t" id="nowTitle">Tidak ada lagu</div>
@@ -176,421 +207,637 @@
     </div>
 
     <div class="controls">
-      <button id="prevBtn" title="Prev">⏮</button>
-      <button id="playBtn" title="Play/Pause">▶</button>
-      <button id="nextBtn" title="Next">⏭</button>
-      <button id="repeatBtn" title="Repeat">🔁</button>
-      <div class="slider">
+      <button id="prevBtn" title="Prev (P)"><i class="fas fa-backward"></i></button>
+      <button id="playBtn" title="Play/Pause (Space)"><i class="fas fa-play"></i></button>
+      <button id="nextBtn" title="Next (N)"><i class="fas fa-forward"></i></button>
+      <button id="repeatBtn" title="Repeat"><i class="fas fa-redo"></i></button>
+      <div class="slider" aria-hidden>
         <span class="muted" id="curTime">0:00</span>
-        <input type="range" id="progress" min="0" max="100" value="0" />
+        <input type="range" id="progress" min="0" max="100" value="0" aria-label="progress" />
         <span class="muted" id="durTime">0:00</span>
       </div>
     </div>
 
     <div style="display:flex;align-items:center;gap:12px">
       <div class="muted">Vol</div>
-      <input id="volume" type="range" min="0" max="1" step="0.01" value="0.85" />
-      <button id="downloadBtn" class="btn">⬇️ Download</button>
+      <input id="volume" type="range" min="0" max="1" step="0.01" value="0.85" aria-label="volume" />
+      <button id="downloadBtn" class="btn" title="Download / Open"><i class="fas fa-download"></i></button>
     </div>
   </div>
-</div>
 
-<!-- Queue drawer (hidden by default) -->
-<div class="drawer" id="drawer" style="display:none">
-  <h4>Daftar Putar</h4>
-  <div class="queue-list" id="queueList"></div>
-  <div style="display:flex;gap:8px;margin-top:10px">
-    <button id="clearQueue" class="btn">Hapus Semua</button>
-    <button id="closeDrawer" class="btn">Tutup</button>
-  </div>
-</div>
-
-<!-- Modal (instructions / fallback) -->
-<div class="modal-back" id="modalBack" style="display:none;place-items:center">
-  <div class="modal" role="dialog" aria-modal="true" id="modal">
-    <h3 id="modalTitle">Instruksi Download</h3>
-    <p id="modalText">Jika kamu memiliki server konversi MP3, set `DOWNLOAD_ENDPOINT` pada baris paling atas file ini. Jika tidak, klik <span class="link" id="openVideoLink">buka video</span> untuk menggunakan layanan konversi pihak ketiga.</p>
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
-      <button id="modalClose" class="btn">Tutup</button>
+  <!-- Queue drawer -->
+  <div class="drawer" id="drawer" style="display:none" aria-hidden>
+    <h4>Daftar Putar</h4>
+    <div class="queue-list" id="queueList" aria-live="polite"></div>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button id="clearQueue" class="btn">Hapus Semua</button>
+      <button id="closeDrawer" class="btn">Tutup</button>
     </div>
   </div>
-</div>
+
+  <!-- Modals -->
+  <div class="modal-back" id="modalBack" role="dialog" aria-modal="true" style="display:none">
+    <div class="modal" id="modalBox">
+      <h3 id="modalTitle">Judul</h3>
+      <div id="modalBody"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+        <button id="modalCancel" class="btn">Tutup</button>
+        <button id="modalConfirm" class="btn primary" style="display:none">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirmation banner (prominent) -->
+  <div class="confirm-banner" id="confirmBanner" role="dialog" aria-label="Konfirmasi Tindakan" style="display:none">
+    <div id="confirmText">Apakah Anda yakin untuk melakukan ini?</div>
+    <div class="confirm-actions">
+      <button class="btn red" id="confirmNo"><i class="fas fa-times"></i> Tidak</button>
+      <button class="btn green" id="confirmYes"><i class="fas fa-check"></i> Ya</button>
+    </div>
+  </div>
+
+  <!-- Load YouTube IFrame API -->
+  <script src="https://www.youtube.com/iframe_api"></script>
 
 <script>
-/* --------------- CONFIG --------------- */
-/*
-  - SEARCH_API: endpoint pencarian (diberikan user)
-  - DOWNLOAD_ENDPOINT: set ke URL server konversi milikmu, misal:
-      https://my-server.example.com/convert
-    Server harus menerima POST { videoId: '...' } dan mengembalikan JSON { url: 'https://.../file.mp3' }
-  - Jika DOWNLOAD_ENDPOINT === null => tombol Download membuka video YouTube dan menampilkan instruksi modal.
-*/
-const SEARCH_API_BASE = 'https://api.nvidiabotz.xyz/search/youtube?q=';
-const DOWNLOAD_ENDPOINT = null; // <-- ganti dengan URL server-mu jika ada, misal 'https://.../convert'
+/* ============================
+   CONFIG
+   ============================ */
+const SEARCH_API_BASE = 'https://api.nvidiabotz.xyz/search/youtube?q='; // gunakan milik Anda jika ada
+const DOWNLOAD_ENDPOINT = null; // isi jika punya server konversi
 
-/* --------------- HELPERS --------------- */
-const $ = (sel, root = document) => root.querySelector(sel);
-const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
-function qsel(id) { return document.getElementById(id); }
-function fmtTime(s){
-  if(!s || isNaN(s)) return '0:00';
-  const m = Math.floor(s/60), sec = Math.floor(s%60).toString().padStart(2,'0');
-  return `${m}:${sec}`;
-}
-function safeParse(json, fallback){ try{ return JSON.parse(json); }catch(e){ return fallback; } }
+/* ============================
+   HELPERS
+   ============================ */
+const $ = (s, root=document) => root.querySelector(s);
+const $$ = (s, root=document) => Array.from(root.querySelectorAll(s));
+function id(n){ return document.getElementById(n); }
+function fmtTime(s){ if(!s || isNaN(s)) return '0:00'; const m=Math.floor(s/60), sec=Math.floor(s%60).toString().padStart(2,'0'); return `${m}:${sec}`; }
+function escapeHtml(s){ return String(s||'').replace(/[&<>\"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;" }[c])); }
+function save(key,v){ localStorage.setItem(key, JSON.stringify(v)); }
+function load(key, fallback){ try{ const v=JSON.parse(localStorage.getItem(key)); return v===null?fallback:v||fallback; }catch(e){return fallback;} }
 
-/* --------------- STATE --------------- */
-let state = {
+/* ============================
+   STATE
+   ============================ */
+const state = {
   view: 'home',
-  queue: JSON.parse(localStorage.getItem('zura_queue') || '[]'),
-  favorites: JSON.parse(localStorage.getItem('zura_favs') || '[]'),
-  favArtists: JSON.parse(localStorage.getItem('zura_artists') || '["Raisa","Tulus","YOASOBI"]'),
+  queue: load('zura_queue', []),
+  playlists: load('zura_playlists', []),
+  favorites: load('zura_favs', []),
+  favArtists: load('zura_artists', ['Raisa','Tulus','YOASOBI']),
   currentIndex: -1,
-  isRepeat: false
+  ytPlayer: null,
+  isPlaying: false,
+  isRepeat: false,
+  settings: load('zura_settings', { theme:'dark', autoplay:false, defaultVolume:0.85, shuffle:false })
 };
 
-/* --------------- DOM refs --------------- */
+/* ============================
+   DOM refs
+   ============================ */
 const navBtns = $$('.nav-btn');
-const homeGrid = qsel('homeGrid');
-const searchGrid = qsel('searchGrid');
-const favGrid = qsel('favGrid');
-const queueGrid = qsel('queueGrid');
-const searchInput = qsel('searchInput');
-const searchBtn = qsel('searchBtn');
-const shuffleBtn = qsel('shuffleBtn');
-const playBtn = qsel('playBtn');
-const prevBtn = qsel('prevBtn');
-const nextBtn = qsel('nextBtn');
-const nowTitle = qsel('nowTitle');
-const nowArtist = qsel('nowArtist');
-const progress = qsel('progress');
-const curTime = qsel('curTime');
-const durTime = qsel('durTime');
-const volume = qsel('volume');
-const downloadBtn = qsel('downloadBtn');
-const drawer = qsel('drawer');
-const queueList = qsel('queueList');
-const miniQueueBtn = qsel('miniQueueBtn');
-const clearQueue = qsel('clearQueue');
-const closeDrawer = qsel('closeDrawer');
-const themeToggle = qsel('themeToggle');
-const favArtistsEl = qsel('favArtists');
-const modalBack = qsel('modalBack');
-const openVideoLink = qsel('openVideoLink');
-const modalClose = qsel('modalClose');
+const homeGrid = id('homeGrid');
+const searchGrid = id('searchGrid');
+const playlistsGrid = id('playlistsGrid');
+const favGrid = id('favGrid');
+const queueGrid = id('queueGrid');
+const searchInput = id('searchInput');
+const searchBtn = id('searchBtn');
+const shuffleBtn = id('shuffleBtn');
+const playBtn = id('playBtn');
+const prevBtn = id('prevBtn');
+const nextBtn = id('nextBtn');
+const repeatBtn = id('repeatBtn');
+const nowTitle = id('nowTitle');
+const nowArtist = id('nowArtist');
+const coverImg = id('coverImg');
+const progress = id('progress');
+const curTime = id('curTime');
+const durTime = id('durTime');
+const volume = id('volume');
+const downloadBtn = id('downloadBtn');
+const drawer = id('drawer');
+const queueList = id('queueList');
+const miniQueueBtn = id('miniQueueBtn');
+const clearQueue = id('clearQueue');
+const closeDrawer = id('closeDrawer');
+const themeToggle = id('themeToggle');
+const favArtistsEl = id('favArtists');
+const modalBack = id('modalBack');
+const modalBox = id('modalBox');
+const modalTitle = id('modalTitle');
+const modalBody = id('modalBody');
+const modalCancel = id('modalCancel');
+const modalConfirm = id('modalConfirm');
+const bars = id('bars');
+const lyricsEl = id('lyrics');
+const nowSmall = id('nowSmall');
+const openSettingsBtn = id('openSettings');
+const createPlaylistBtn = id('createPlaylistBtn');
+const confirmBanner = id('confirmBanner');
+const confirmText = id('confirmText');
+const confirmYes = id('confirmYes');
+const confirmNo = id('confirmNo');
 
-/* --------------- AUDIO element --------------- */
-const audio = new Audio();
-audio.crossOrigin = "anonymous";
-audio.preload = "metadata";
+/* ============================
+   YouTube IFrame (player will be created when API ready)
+   ============================ */
+let YTReady = false;
+let ytPlayer; // YT.Player instance
+function onYouTubeIframeAPIReady() {
+  YTReady = true;
+  const div = document.createElement('div'); div.id = 'yt-player'; div.style.display='none'; document.body.appendChild(div);
+  ytPlayer = new YT.Player('yt-player', {
+    height: '0', width: '0',
+    playerVars: { modestbranding: 1, rel:0, origin: location.origin },
+    events: {
+      'onReady': e=>{ if(state.settings.defaultVolume!==undefined) ytPlayer.setVolume(Math.round(state.settings.defaultVolume*100)); },
+      'onStateChange': onYTStateChange,
+      'onError': (e)=>console.warn('YT error', e)
+    }
+  });
+  state.ytPlayer = ytPlayer;
+}
+function onYTStateChange(ev){
+  if(ev.data === 1){ state.isPlaying = true; setPlayIcon(true); document.body.classList.add('playing'); bars.classList.add('playing'); document.querySelectorAll('.cover').forEach(c=>c.classList.add('playing')); markPlayingUI(true); }
+  else if(ev.data === 2){ state.isPlaying = false; setPlayIcon(false); document.body.classList.remove('playing'); bars.classList.remove('playing'); document.querySelectorAll('.cover').forEach(c=>c.classList.remove('playing')); markPlayingUI(false); }
+  else if(ev.data === 0){ // ended
+    if(state.isRepeat){
+      try{ ytPlayer.seekTo(0); ytPlayer.playVideo(); }catch(e){}
+    } else {
+      nextTrack();
+    }
+  }
+}
+function setPlayIcon(playing){ playBtn.innerHTML = playing? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>'; }
 
-/* --------------- UTIL: normalize API item --------------- */
-/*
-  Because we don't have exact docs for the 3rd-party API structure,
-  attempt to be defensive and map commonly used fields.
-*/
+/* periodic UI update for progress */
+setInterval(()=>{
+  if(state.ytPlayer && state.isPlaying){
+    try{
+      const t = state.ytPlayer.getCurrentTime? state.ytPlayer.getCurrentTime() : 0;
+      const d = state.ytPlayer.getDuration? state.ytPlayer.getDuration() : 0;
+      curTime.textContent = fmtTime(t);
+      durTime.textContent = fmtTime(d);
+      progress.value = d? (t/d)*100 : 0;
+    }catch(e){}
+  }
+}, 500);
+
+/* normalize */
 function normalize(item){
-  // item might be { videoId, title, author, duration, thumbnail, url } or others
-  const videoId = item.videoId || item.id || (item.link && extractYouTubeId(item.link)) || (item.url && extractYouTubeId(item.url)) || null;
-  const title = item.title || item.name || (item.snippet && item.snippet.title) || 'Unknown Title';
-  const artist = item.author || item.channel || (item.snippet && item.snippet.channelTitle) || (item.uploader) || 'Unknown Artist';
-  // possible thumbnail fields
-  const thumbnail = item.thumbnail || item.thumbnails?.default || (item.snippet && item.snippet.thumbnails?.medium?.url) || null;
-  // direct audio url if API provides (some APIs return direct stream) — else fallback to youtube watch url
-  const direct = item.audio || item.stream || item.url || item.playUrl || null;
-  const watchUrl = videoId ? `https://www.youtube.com/watch?v=${videoId}` : (item.watch || item.link || direct || null);
-  return {
-    id: videoId || ('id_' + Math.random().toString(36).slice(2,9)),
-    title, artist, thumbnail, direct, watchUrl, raw: item
-  };
+  const videoId = item.videoId || item.id || item.video_id || (item.link && extractYouTubeId(item.link)) || (item.snippet && (item.snippet.resourceId?.videoId || item.snippet.id?.videoId)) || null;
+  const title = item.title || item.name || (item.snippet && item.snippet.title) || (item.snippet && item.snippet.channelTitle) || 'Unknown Title';
+  const artist = item.author || item.channel || (item.snippet && item.snippet.channelTitle) || 'Unknown Artist';
+  const thumbnail = item.thumbnail || (item.thumbnails && (item.thumbnails.medium?.url || item.thumbnails.default?.url)) || (item.snippet && item.snippet.thumbnails?.medium?.url) || (videoId?`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`:null);
+  const watchUrl = videoId ? `https://www.youtube.com/watch?v=${videoId}` : (item.link || item.url || null);
+  const idSafe = videoId || ('id_' + Math.random().toString(36).slice(2,9));
+  return { id: idSafe, title, artist, thumbnail, watchUrl, raw: item };
 }
-function extractYouTubeId(url){
-  if(!url) return null;
-  try{
-    const u = new URL(url);
-    if(u.hostname.includes('youtu.be')) return u.pathname.slice(1);
-    if(u.searchParams.get('v')) return u.searchParams.get('v');
-  }catch(e){}
-  // fallback regex
-  const m = url.match(/(?:v=|\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
-  return m?m[1]:null;
-}
+function extractYouTubeId(u){ if(!u) return null; try{ const url = new URL(u); if(url.hostname.includes('youtu.be')) return url.pathname.slice(1); if(url.searchParams.get('v')) return url.searchParams.get('v'); }catch(e){} const m = u.match(/(?:v=|\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{6,})/); return m?m[1]:null; }
 
-/* --------------- RENDER helpers --------------- */
-function makeCard(track){
-  const el = document.createElement('div');
-  el.className = 'card';
+/* ============================
+   RENDER CARD
+   ============================ */
+function cardFor(track, opts={}) {
+  const el = document.createElement('div'); el.className='card'; el.dataset.id = track.id;
   el.innerHTML = `
-    <div class="thumb" aria-hidden>
-      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <rect width="100" height="100" rx="8" fill="url(#g)"></rect>
-        <defs>
-          <linearGradient id="g" x1="0" x2="1">
-            <stop offset="0" stop-color="#081010"/>
-            <stop offset="1" stop-color="#071a16"/>
-          </linearGradient>
-        </defs>
-        <path d="M30 30v40l30-20V30z" fill="#1db954"/>
-      </svg>
-    </div>
-    <div class="meta">
-      <div class="title">${escapeHtml(track.title)}</div>
-      <div class="sub">${escapeHtml(track.artist)}</div>
-    </div>
+    <div class="thumb">${track.thumbnail? `<img src="${escapeHtml(track.thumbnail)}" alt="">` : `<div style="display:grid;place-items:center;height:100%;color:var(--muted)">No Image</div>`}</div>
+    <div class="meta"><div class="title">${escapeHtml(track.title)}</div><div class="sub">${escapeHtml(track.artist)}</div></div>
     <div class="row">
       <div style="display:flex;gap:8px">
-        <button class="btn primary play">Play</button>
-        <button class="btn add-fav">❤</button>
+        <button class="btn primary play" title="Putar"><i class="fas fa-play"></i></button>
+        <button class="btn add" title="Tambah ke playlist"><i class="fas fa-list-plus"></i></button>
+        <button class="btn tiny fav" title="Toggle favorit"><i class="fas fa-heart"></i></button>
       </div>
-      <div>
-        <button class="btn more">⋯</button>
-      </div>
-    </div>
-  `;
-  // actions
-  el.querySelector('.play').addEventListener('click', (e)=>{ e.stopPropagation(); pushAndPlay(track); });
-  el.querySelector('.add-fav').addEventListener('click', (e)=>{ e.stopPropagation(); addFavorite(track); });
-  el.querySelector('.more').addEventListener('click', (e)=>{ e.stopPropagation(); alert('More menu (future): ' + track.title); });
-  el.addEventListener('dblclick', ()=> pushAndPlay(track) );
+      <div><button class="btn tiny more" title="Lainnya"><i class="fas fa-ellipsis-h"></i></button></div>
+    </div>`;
+  const playBtnEl = el.querySelector('.play');
+  playBtnEl.addEventListener('click', ()=>{ enqueueAndPlay(track); });
+  el.querySelector('.add').addEventListener('click', ()=>{ openAddToPlaylistModal(track); });
+  el.querySelector('.fav').addEventListener('click', ()=>{ toggleFav(track); });
+  el.querySelector('.more').addEventListener('click', ()=>{ openMoreMenu(track); });
+  el.ondblclick = ()=> enqueueAndPlay(track);
   return el;
 }
-function escapeHtml(str){ return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
 
-/* --------------- UI renderers --------------- */
-function renderHome(items = []){
+/* ============================
+   RENDERS
+   ============================ */
+function renderHome(items){
   homeGrid.innerHTML = '';
-  if(!items.length){ homeGrid.innerHTML = `<div class="muted">Tidak ada rekomendasi. Klik Random untuk memuat.</div>`; return; }
-  items.forEach(it => homeGrid.appendChild(makeCard(it)));
+  if(!items || items.length===0){
+    homeGrid.innerHTML = '<div class="muted-center">Klik Random untuk memuat rekomendasi.</div>';
+    return;
+  }
+  items.slice(0,12).forEach(t=> homeGrid.appendChild(cardFor(t)));
+  highlightCurrentPlaying();
 }
-function renderSearch(items = []){
+function renderSearch(items){
   searchGrid.innerHTML = '';
-  if(!items.length) searchGrid.innerHTML = `<div class="muted">Tidak ada hasil.</div>`;
-  items.forEach(it => searchGrid.appendChild(makeCard(it)));
+  if(!items || items.length===0) searchGrid.innerHTML = '<div class="muted-center">Tidak ada hasil.</div>';
+  (items||[]).forEach(t=> searchGrid.appendChild(cardFor(t)));
+  highlightCurrentPlaying();
 }
 function renderFavs(){
   favGrid.innerHTML = '';
-  if(!state.favorites.length) favGrid.innerHTML = `<div class="muted">Belum ada favorit.</div>`;
-  state.favorites.forEach(it => favGrid.appendChild(makeCard(it)));
-  // artists
+  if(!state.favorites.length) favGrid.innerHTML = '<div class="muted-center">Belum ada favorit.</div>';
+  state.favorites.forEach(t=> favGrid.appendChild(cardFor(t)));
   favArtistsEl.innerHTML = '';
-  state.favArtists.forEach(name=>{
-    const btn = document.createElement('div'); btn.className='artist-chip'; btn.textContent=name;
-    btn.addEventListener('click', ()=> doSearch(name));
-    favArtistsEl.appendChild(btn);
+  state.favArtists.forEach(a=>{
+    const b = document.createElement('div'); b.className='artist-chip'; b.textContent = a;
+    b.onclick = ()=> { searchInput.value = a; searchBtn.click(); };
+    favArtistsEl.appendChild(b);
+  });
+}
+function renderPlaylists(){
+  playlistsGrid.innerHTML = '';
+  if(!state.playlists.length) playlistsGrid.innerHTML = '<div class="muted-center">Belum ada playlist. Buat playlist baru.</div>';
+  state.playlists.forEach((pl, idx)=>{
+    const card = document.createElement('div'); card.className='card';
+    card.innerHTML = `<div style="display:flex;align-items:center;gap:10px"><div style="width:64px;height:64px;border-radius:8px;background:var(--glass);display:grid;place-items:center">${pl.items.length}</div><div style="flex:1"><div style="font-weight:700">${escapeHtml(pl.name)}</div><div class="muted">${pl.items.length} lagu</div></div></div><div style="margin-top:8px;display:flex;gap:8px"><button class="btn" data-i="${idx}">Buka</button><button class="btn" data-del="${idx}">Hapus</button></div>`;
+    card.querySelector('[data-i]').onclick = ()=> openPlaylist(idx);
+    card.querySelector('[data-del]').onclick = ()=> { if(confirm('Hapus playlist ini?')){ state.playlists.splice(idx,1); save('zura_playlists', state.playlists); renderPlaylists(); } };
+    playlistsGrid.appendChild(card);
   });
 }
 function renderQueue(){
   queueGrid.innerHTML = '';
-  if(!state.queue.length) queueGrid.innerHTML = `<div class="muted">Queue kosong.</div>`;
-  state.queue.forEach((it, idx)=>{
-    const c = makeCard(it);
-    // small indicator
-    const num = document.createElement('div'); num.className='dot'; num.textContent = idx+1; num.style.marginRight='8px';
+  if(!state.queue.length) queueGrid.innerHTML = '<div class="muted-center">Queue kosong.</div>';
+  state.queue.forEach((t, i)=>{
+    const c = cardFor(t);
     const wrapper = document.createElement('div'); wrapper.style.display='flex'; wrapper.style.alignItems='center'; wrapper.style.gap='10px';
-    wrapper.appendChild(num); wrapper.appendChild(c);
+    const num = document.createElement('div'); num.className='dot'; num.textContent = i+1;
+    wrapper.appendChild(num);
+    wrapper.appendChild(c);
     queueGrid.appendChild(wrapper);
   });
-  // drawer list
+  // queue drawer list (with DnD)
   queueList.innerHTML = '';
-  state.queue.forEach((t, i)=>{
-    const item = document.createElement('div'); item.className='q-item';
-    item.innerHTML = `<div class="dot">${i+1}</div><div style="flex:1"><div style="font-weight:700">${escapeHtml(t.title)}</div><div class="muted">${escapeHtml(t.artist)}</div></div><div><button class="btn" data-i="${i}">Play</button></div>`;
-    item.querySelector('button').addEventListener('click', ()=>{ playIndex(i); closeDrawer.click(); });
+  state.queue.forEach((t,i)=>{
+    const item = document.createElement('div'); item.className='q-item'; item.draggable=true; item.dataset.index = i;
+    item.innerHTML = `<div class="handle" aria-hidden><i class="fas fa-grip-lines"></i></div><div style="flex:1"><div style="font-weight:700">${escapeHtml(t.title)}</div><div class="muted">${escapeHtml(t.artist)}</div></div><div style="display:flex;gap:6px;align-items:center"><button class="btn" data-i="${i}">Play</button><button class="btn" data-del="${i}" title="Hapus"><i class="fas fa-trash"></i></button></div>`;
+    item.querySelector('[data-i]').onclick = ()=> { playIndex(i); drawer.style.display='none'; };
+    item.querySelector('[data-del]').onclick = ()=> { state.queue.splice(i,1); persist(); renderQueue(); showToast('Dihapus dari antrian'); };
+    // drag events
+    item.addEventListener('dragstart', (e)=>{ item.classList.add('dragging'); e.dataTransfer.setData('text/plain', i); });
+    item.addEventListener('dragend', ()=>{ item.classList.remove('dragging'); });
     queueList.appendChild(item);
   });
+  // make queueList a drop zone
+  queueList.addEventListener('dragover', e=> e.preventDefault());
+  queueList.addEventListener('drop', (e)=>{
+    e.preventDefault();
+    const from = Number(e.dataTransfer.getData('text/plain'));
+    if(isNaN(from)) return;
+    const toElem = e.target.closest('.q-item');
+    let toIndex = state.queue.length-1;
+    if(toElem){
+      toIndex = Number(toElem.dataset.index);
+    }
+    if(from === toIndex) return;
+    const [moved] = state.queue.splice(from,1);
+    state.queue.splice(toIndex,0,moved);
+    persist();
+    renderQueue();
+  });
+  highlightCurrentPlaying();
 }
 
-/* --------------- STORAGE --------------- */
-function saveState(){ localStorage.setItem('zura_queue', JSON.stringify(state.queue)); localStorage.setItem('zura_favs', JSON.stringify(state.favorites)); localStorage.setItem('zura_artists', JSON.stringify(state.favArtists)); }
+/* storage */
+function persist(){ save('zura_queue', state.queue); save('zura_playlists', state.playlists); save('zura_favs', state.favorites); save('zura_artists', state.favArtists); save('zura_settings', state.settings); }
 
-/* --------------- MUSIC controls --------------- */
-function pushAndPlay(track){
-  // Add to queue and play the item at last index
+/* play/queue */
+function enqueueAndPlay(track){
+  // prevent duplicates in a row (optional)
   state.queue.push(track);
-  saveState(); renderQueue();
-  playIndex(state.queue.length -1);
+  persist();
+  renderQueue();
+  playIndex(state.queue.length - 1);
+  showToast('Ditambahkan ke antrian');
 }
 function playIndex(i){
-  const track = state.queue[i];
-  if(!track) return;
+  if(i<0 || i>=state.queue.length) return;
   state.currentIndex = i;
-  // choose playable source: direct stream if provided, else watchUrl (won't play audio in <audio> usually)
-  const source = track.direct || track.watchUrl || track.raw?.url || null;
-  if(!source){
-    alert('Tidak menemukan sumber audio untuk track ini.');
-    return;
+  const t = state.queue[i];
+  if(!t) return;
+  updateNowPlayingUI(t);
+  // load into YouTube player if available
+  if(YTReady && state.ytPlayer){
+    const vid = extractYouTubeId(t.watchUrl) || (t.id && t.id.startsWith('id_')?null:t.id);
+    if(vid){
+      try{
+        state.ytPlayer.loadVideoById(vid);
+        state.ytPlayer.playVideo();
+      }catch(err){
+        try{ state.ytPlayer.cueVideoById(vid); state.ytPlayer.playVideo(); }catch(e){ openVideo(t); showToast('Gagal memutar via embed, buka video'); }
+      }
+    } else {
+      openVideo(t);
+    }
+  } else { // fallback: open video in new tab
+    openVideo(t);
   }
-  audio.src = source;
-  audio.play().catch(err=>{
-    // cannot autoplay or source not playable; try opening video
-    console.warn('Tidak bisa autoplay. fallback ke buka video.', err);
-    openVideo(track);
-  });
-  // update now playing
-  nowTitle.textContent = track.title;
-  nowArtist.textContent = track.artist;
-  curTime.textContent = '0:00';
-  durTime.textContent = '0:00';
-  playBtn.textContent = '⏸';
-  // update drawer & UI
-  renderQueue();
+  highlightCurrentPlaying();
 }
 function nextTrack(){
-  if(state.isRepeat) { audio.currentTime = 0; audio.play(); return; }
-  if(state.currentIndex +1 < state.queue.length){ playIndex(state.currentIndex +1); } else { audio.pause(); playBtn.textContent='▶'; }
-}
-function prevTrack(){ if(state.currentIndex > 0) playIndex(state.currentIndex -1); }
-
-/* --------------- FAVORITES --------------- */
-function addFavorite(track){
-  if(!state.favorites.find(f => f.id === track.id)){
-    state.favorites.push(track); saveState();
-    renderFavs();
+  if(state.isRepeat){
+    if(state.ytPlayer && state.ytPlayer.seekTo){
+      try{ state.ytPlayer.seekTo(0); state.ytPlayer.playVideo(); }catch(e){}
+    }
+    return;
+  }
+  if(state.currentIndex + 1 < state.queue.length){
+    const ni = state.settings.shuffle ? Math.floor(Math.random()*state.queue.length) : state.currentIndex + 1;
+    playIndex(ni);
   } else {
-    // remove
-    state.favorites = state.favorites.filter(f=>f.id!==track.id); saveState(); renderFavs();
+    // finished
+    if(state.settings.autoplay && state.queue.length>0){
+      playIndex(0);
+    } else {
+      if(state.ytPlayer) state.ytPlayer.pauseVideo();
+      state.isPlaying = false;
+      setPlayIcon(false);
+      bars.classList.remove('playing');
+    }
+  }
+}
+function prevTrack(){ if(state.currentIndex > 0) playIndex(state.currentIndex - 1); else { if(state.ytPlayer) state.ytPlayer.seekTo(0); } }
+function updateNowPlayingUI(t){
+  nowTitle.textContent = t.title;
+  nowArtist.textContent = t.artist;
+  nowSmall.textContent = t.title + ' — ' + t.artist;
+  coverImg.src = t.thumbnail || '';
+  fetchLyrics(t.artist, t.title);
+  bars.classList.add('playing');
+  persist();
+}
+function markPlayingUI(isPlaying){
+  // add playing class to queue and home/search cards
+  highlightCurrentPlaying();
+}
+function highlightCurrentPlaying(){
+  // remove previous highlights
+  document.querySelectorAll('.card.playing').forEach(x=>x.classList.remove('playing'));
+  if(state.currentIndex>=0 && state.queue[state.currentIndex]){
+    const curId = state.queue[state.currentIndex].id;
+    // highlight in grid(s)
+    document.querySelectorAll('.card').forEach(c=>{
+      if(c.dataset.id && c.dataset.id === curId) c.classList.add('playing');
+    });
+    // highlight in queue drawer items
+    document.querySelectorAll('.q-item').forEach(q=>{
+      q.style.background = '#0000';
+      const idx = Number(q.dataset.index);
+      if(idx === state.currentIndex) q.style.background = 'linear-gradient(90deg, rgba(29,185,84,0.06), rgba(29,185,84,0.02))';
+    });
   }
 }
 
-/* --------------- SEARCH / API --------------- */
+/* favorites */
+function toggleFav(track){
+  const idx = state.favorites.findIndex(f=>f.id===track.id);
+  if(idx>-1){
+    state.favorites.splice(idx,1); showToast('Dihapus dari favorit');
+  } else {
+    state.favorites.push(track); showToast('Ditambahkan ke favorit');
+  }
+  persist(); renderFavs();
+}
+function openAddToPlaylistModal(track){
+  showModal('Tambah ke Playlist', '');
+  const body = document.createElement('div');
+  const list = document.createElement('div'); list.style.display='flex'; list.style.flexDirection='column'; list.style.gap='8px';
+  state.playlists.forEach((pl, i)=>{
+    const r = document.createElement('div'); r.style.display='flex'; r.style.justifyContent='space-between'; r.style.alignItems='center';
+    r.innerHTML = `<div>${escapeHtml(pl.name)} (${pl.items.length})</div><div><button class="btn" data-i="${i}">Tambah</button></div>`;
+    r.querySelector('button').onclick = ()=>{ pl.items.push(track); persist(); closeModal(); showToast('Ditambahkan ke ' + pl.name); };
+    list.appendChild(r);
+  });
+  const createRow = document.createElement('div'); createRow.style.marginTop='12px';
+  createRow.innerHTML = `<input placeholder="Nama playlist baru" id="newPlName" style="width:100%;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:var(--text)"><div style="margin-top:8px"><button id="createPlBtn" class="btn primary">Buat & Tambah</button></div>`;
+  body.appendChild(list); body.appendChild(createRow);
+  modalBody.innerHTML=''; modalBody.appendChild(body); modalConfirm.style.display='none'; modalBack.style.display='grid';
+  document.getElementById('createPlBtn').onclick = ()=>{ const name = document.getElementById('newPlName').value.trim(); if(!name) return alert('Nama kosong'); const pl = { name, items:[track] }; state.playlists.push(pl); persist(); closeModal(); renderPlaylists(); showToast('Playlist dibuat & lagu ditambahkan'); };
+}
+function openPlaylist(idx){
+  const pl = state.playlists[idx]; if(!pl) return;
+  showModal(pl.name, '');
+  const container = document.createElement('div');
+  pl.items.forEach((t, i)=>{
+    const row = document.createElement('div'); row.style.display='flex'; row.style.justifyContent='space-between'; row.style.gap='8px'; row.style.alignItems='center'; row.style.padding='8px 0';
+    row.innerHTML = `<div><div style="font-weight:700">${escapeHtml(t.title)}</div><div class="muted">${escapeHtml(t.artist)}</div></div><div style="display:flex;gap:8px"><button class="btn" data-i="${i}">Play</button><button class="btn" data-del="${i}">Hapus</button></div>`;
+    row.querySelector('[data-i]').onclick = ()=>{ enqueueAndPlay(t); closeModal(); };
+    row.querySelector('[data-del]').onclick = ()=>{ if(confirm('Hapus dari playlist?')){ pl.items.splice(i,1); persist(); openPlaylist(idx); renderPlaylists(); } };
+    container.appendChild(row);
+  });
+  modalBody.innerHTML=''; modalBody.appendChild(container); modalBack.style.display='grid'; modalConfirm.style.display='none';
+}
+
+/* SEARCH */
 async function apiSearch(q){
+  if(!q) return [];
   try{
-    q = q.trim();
-    if(!q) return [];
     const res = await fetch(SEARCH_API_BASE + encodeURIComponent(q));
-    if(!res.ok) throw new Error('Gagal memanggil API pencarian');
+    if(!res.ok) throw new Error('API search gagal');
     const j = await res.json();
-    // Defensive: API may return { result: [...] } or { items: [...] } or [...]
-    const listRaw = (j.result || j.results || j.items || j.data || j) || [];
-    // If top-level keys exist, flatten if necessary
-    const arr = Array.isArray(listRaw) ? listRaw : (listRaw.items || []);
-    const normalized = (arr || []).map(normalize);
-    return normalized;
+    const arr = j.result || j.results || j.items || j.data || j || [];
+    const list = Array.isArray(arr)? arr : (arr.items || []);
+    return (list||[]).map(normalize);
   }catch(e){
-    console.error('Search error', e);
-    // Show 505 fallback page
-    window.location.href = '505.html';
+    console.error('search err', e);
+    showToast('Gagal memanggil API pencarian. Coba lagi atau gunakan server lain.');
     return [];
   }
 }
 
-/* --------------- UI actions --------------- */
-navBtns.forEach(b=>{
-  b.addEventListener('click', ()=>{
-    navBtns.forEach(x=>x.classList.remove('active'));
-    b.classList.add('active');
-    const page = b.dataset.page;
-    showView(page);
-  });
-});
-function showView(v){
-  qsel('view-home').style.display = v==='home' ? '' : 'none';
-  qsel('view-search').style.display = v==='search' ? '' : 'none';
-  qsel('view-favorites').style.display = v==='favorites' ? '' : 'none';
-  qsel('view-queue').style.display = v==='queue' ? '' : 'none';
-  state.view = v;
+/* LYRICS */
+async function fetchLyrics(artist, title){
+  lyricsEl.textContent = 'Mencari lirik...';
+  try{
+    const url = `https://api.lyrics.ovh/v1/${encodeURIComponent(artist)}/${encodeURIComponent(title)}`;
+    const res = await fetch(url);
+    if(!res.ok) { lyricsEl.textContent = 'Lirik tidak ditemukan.'; return; }
+    const j = await res.json();
+    if(j && j.lyrics){ lyricsEl.textContent = j.lyrics; } else lyricsEl.textContent = 'Lirik tidak ditemukan.';
+  }catch(e){ lyricsEl.textContent = 'Lirik tidak tersedia.'; }
 }
 
-/* Search box */
+/* download/open */
+function openVideo(track){
+  const url = track.watchUrl || track.raw?.link || track.raw?.url;
+  if(url) window.open(url, '_blank');
+  else showToast('Link video tidak tersedia');
+}
+async function handleDownload(){
+  if(state.currentIndex<0) return showToast('Pilih lagu dulu');
+  const t = state.queue[state.currentIndex];
+  const vid = extractYouTubeId(t.watchUrl) || (t.id && !t.id.startsWith('id_')?t.id:null);
+  if(!vid) return showToast('Video ID tidak ditemukan');
+  if(DOWNLOAD_ENDPOINT){
+    try{
+      const r = await fetch(DOWNLOAD_ENDPOINT, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ videoId: vid }) });
+      if(!r.ok) throw new Error('Server konversi gagal');
+      const j = await r.json();
+      const link = j.url || j.download || j.result;
+      if(link) window.open(link,'_blank'); else showToast('Server merespon tanpa URL download');
+    }catch(e){ showToast('Gagal konversi'); }
+  } else {
+    openVideo(t);
+    showToast('Download fallback: membuka video. Gunakan server konversi untuk MP3.');
+  }
+}
+
+/* UI helpers */
+function showModal(title, contentHtml){ modalTitle.textContent = title; if(typeof contentHtml === 'string') modalBody.innerHTML = contentHtml; else { modalBody.innerHTML = ''; modalBody.appendChild(contentHtml); } modalBack.style.display = 'grid'; modalBack.scrollTop = 0; }
+function closeModal(){ modalBack.style.display = 'none'; modalBody.innerHTML=''; modalConfirm.style.display='none'; }
+modalCancel.onclick = ()=> closeModal(); modalBack.onclick = (e)=> { if(e.target === modalBack) closeModal(); };
+function showToast(msg, t=2200){ const el = document.createElement('div'); el.textContent=msg; el.style.position='fixed'; el.style.bottom='120px'; el.style.left='50%'; el.style.transform='translateX(-50%)'; el.style.background='rgba(0,0,0,0.8)'; el.style.color='#fff'; el.style.padding='10px 14px'; el.style.borderRadius='8px'; el.style.zIndex='200'; document.body.appendChild(el); setTimeout(()=> el.remove(), t); }
+
+/* bindings */
+navBtns.forEach(b=> b.addEventListener('click', ()=>{ navBtns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); const page = b.dataset.page; showView(page); }));
+function showView(v){ state.view = v; ['home','search','playlists','favorites','queue'].forEach(k=>{ const el = document.getElementById('view-'+k); if(el) el.style.display = (k===v)? '':'none'; }); }
+
+/* search */
 searchBtn.addEventListener('click', async ()=>{
-  const q = searchInput.value;
-  qsel('subtitle').textContent = `Hasil pencarian: "${q}"`;
+  const q = searchInput.value.trim(); if(!q) return;
+  id('subtitle').textContent = `Hasil pencarian: "${q}"`;
   const items = await apiSearch(q);
   renderSearch(items);
   showView('search');
 });
-searchInput.addEventListener('keydown', async (e)=>{ if(e.key==='Enter'){ searchBtn.click(); } });
+searchInput.addEventListener('keydown', e=>{ if(e.key==='Enter') searchBtn.click(); });
 
+/* shuffle / recommendations */
 shuffleBtn.addEventListener('click', async ()=>{
-  // load random keywords
-  const keywords = ['top hits','best songs','indie','lofi','chart','acoustic','k-pop','j-pop'];
-  const pick = keywords[Math.floor(Math.random() * keywords.length)];
+  const keywords = ['top hits','best songs','indie','lofi','chart','acoustic','k-pop','j-pop','relax','lofi hip hop'];
+  const pick = keywords[Math.floor(Math.random()*keywords.length)];
+  id('subtitle').textContent = `Rekomendasi acak: ${pick}`;
   const items = await apiSearch(pick);
-  renderHome(items.slice(0, 12));
+  renderHome(items);
   showView('home');
 });
 
-/* play / controls */
+/* settings modal */
+openSettingsBtn.addEventListener('click', ()=> {
+  const content = document.createElement('div');
+  content.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <label>Theme: <select id="selTheme"><option value="dark">Dark</option><option value="light">Light</option></select></label>
+      <label><input type="checkbox" id="chkAuto" /> Autoplay next</label>
+      <label><input type="checkbox" id="chkShuffle" /> Shuffle</label>
+      <label>Default volume: <input id="inpVol" type="range" min="0" max="1" step="0.01" /></label>
+    </div>
+  `;
+  showModal('Pengaturan', content);
+  document.getElementById('selTheme').value = state.settings.theme || 'dark';
+  document.getElementById('chkAuto').checked = state.settings.autoplay || false;
+  document.getElementById('chkShuffle').checked = state.settings.shuffle || false;
+  const inpVol = document.getElementById('inpVol'); inpVol.value = state.settings.defaultVolume ?? 0.85;
+  modalConfirm.style.display='inline-block';
+  modalConfirm.textContent='Simpan';
+  modalConfirm.onclick = ()=>{
+    state.settings.theme = document.getElementById('selTheme').value;
+    state.settings.autoplay = document.getElementById('chkAuto').checked;
+    state.settings.shuffle = document.getElementById('chkShuffle').checked;
+    state.settings.defaultVolume = parseFloat(document.getElementById('inpVol').value);
+    persist(); applySettings(); closeModal(); showToast('Pengaturan disimpan');
+  };
+});
+
+/* playlist create */
+createPlaylistBtn.addEventListener('click', ()=>{ const content = document.createElement('div'); content.innerHTML = `<input id="newPlName" placeholder="Nama playlist..." style="width:100%;padding:8px;border-radius:6px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--text)"/>`; showModal('Buat Playlist Baru', content); modalConfirm.style.display='inline-block'; modalConfirm.textContent='Buat'; modalConfirm.onclick = ()=>{ const name = document.getElementById('newPlName').value.trim(); if(!name) return alert('Nama kosong'); state.playlists.push({name, items:[]}); persist(); renderPlaylists(); closeModal(); showToast('Playlist dibuat'); }; });
+
+/* drawer */
+miniQueueBtn.addEventListener('click', ()=> { drawer.style.display = drawer.style.display==='none'? '':'none'; });
+closeDrawer.addEventListener('click', ()=> drawer.style.display='none');
+clearQueue.addEventListener('click', ()=> { showConfirm('Hapus semua antrian?', ()=>{ state.queue=[]; persist(); renderQueue(); showToast('Queue dikosongkan'); }); });
+
+/* player controls */
 playBtn.addEventListener('click', ()=> {
-  if(audio.paused){ audio.play(); playBtn.textContent='⏸'; } else { audio.pause(); playBtn.textContent='▶'; }
+  if(!YTReady || !state.ytPlayer){ const idx=state.currentIndex; if(idx<0) return; openVideo(state.queue[idx]); return; }
+  const st = state.ytPlayer.getPlayerState ? state.ytPlayer.getPlayerState() : null;
+  if(st===1){ state.ytPlayer.pauseVideo(); } else { state.ytPlayer.playVideo(); }
 });
 nextBtn.addEventListener('click', nextTrack);
 prevBtn.addEventListener('click', prevTrack);
-repeatBtn.addEventListener('click', ()=>{ state.isRepeat = !state.isRepeat; repeatBtn.style.opacity = state.isRepeat?1:0.6; });
+repeatBtn.addEventListener('click', ()=> { state.isRepeat = !state.isRepeat; repeatBtn.style.opacity = state.isRepeat ? 1 : 0.6; });
 
-audio.addEventListener('timeupdate', ()=>{
-  const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
-  progress.value = pct || 0;
-  curTime.textContent = fmtTime(audio.currentTime);
-  durTime.textContent = fmtTime(audio.duration);
-});
-progress.addEventListener('input', ()=> { if(audio.duration) audio.currentTime = (progress.value/100) * audio.duration; });
-volume.addEventListener('input', ()=> audio.volume = volume.value);
+progress.addEventListener('input', ()=> { if(!YTReady || !state.ytPlayer) return; const d = state.ytPlayer.getDuration(); if(!d) return; const pos = (progress.value/100)*d; state.ytPlayer.seekTo(pos, true); });
+volume.addEventListener('input', ()=> { if(YTReady && state.ytPlayer) state.ytPlayer.setVolume(Math.round(volume.value*100)); state.settings.defaultVolume = parseFloat(volume.value); persist(); });
 
-/* queue drawer */
-miniQueueBtn.addEventListener('click', ()=> { drawer.style.display = drawer.style.display === 'none' ? '' : 'none'; });
-closeDrawer.addEventListener('click', ()=> drawer.style.display='none');
-clearQueue.addEventListener('click', ()=> { if(confirm('Hapus semua queue?')){ state.queue=[]; saveState(); renderQueue(); } });
-
-/* download button */
-downloadBtn.addEventListener('click', async ()=>{
-  const idx = state.currentIndex;
-  if(idx<0 || !state.queue[idx]){ alert('Pilih lagu terlebih dahulu.'); return; }
-  const track = state.queue[idx];
-  const vidId = track.id || extractYouTubeId(track.watchUrl);
-  if(DOWNLOAD_ENDPOINT){
-    // call server convert endpoint
-    try{
-      const r = await fetch(DOWNLOAD_ENDPOINT, {
-        method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ videoId: vidId })
-      });
-      if(!r.ok) throw new Error('Server konversi gagal');
-      const j = await r.json();
-      const url = j.url || j.download || j.result;
-      if(url) window.open(url, '_blank');
-      else { alert('Server merespon tanpa URL download. Periksa format respon.'); }
-    }catch(e){
-      alert('Gagal meminta server konversi: ' + e.message);
-    }
-  } else {
-    // fallback: open video page and show modal with instructions
-    openVideo(track);
-    showModal('Cara download', 'Sistem saat ini tidak memiliki server konversi. Buka video di tab baru lalu gunakan layanan konverter YouTube→MP3 pihak ketiga atau setup server konversi sendiri. (Jika kamu ingin, aku bisa bantu buat server konversinya.)');
-  }
-});
-
-/* open video helper */
-function openVideo(track){
-  const url = track.watchUrl || track.raw?.link || track.raw?.url;
-  if(url) window.open(url, '_blank');
-  else alert('Tidak ada link video tersedia untuk track ini.');
-}
-
-/* modal */
-function showModal(title, text){
-  qsel('modalTitle').textContent = title || 'Info';
-  qsel('modalText').textContent = text || '';
-  modalBack.style.display = 'grid';
-}
-modalClose.addEventListener('click', ()=> modalBack.style.display='none');
-modalBack.addEventListener('click', (e)=>{ if(e.target === modalBack) modalBack.style.display='none'; });
-openVideoLink.addEventListener('click', ()=> { modalBack.style.display='none'; const idx = state.currentIndex; if(idx>=0) openVideo(state.queue[idx]); });
+downloadBtn.addEventListener('click', handleDownload);
 
 /* theme toggle */
-themeToggle.addEventListener('click', ()=>{ document.body.classList.toggle('light'); });
+themeToggle.addEventListener('click', ()=> {
+  state.settings.theme = (state.settings.theme === 'light') ? 'dark' : 'light';
+  persist(); applySettings();
+});
 
-/* --------------- BOOTSTRAP: load saved state, render initial UI --------------- */
-function initUI(){
-  // render initial home empty
-  renderHome([]);
-  renderFavs(); renderQueue(); // queue drawer content
-  // attach initial random load
-  shuffleBtn.click();
+/* init */
+function applySettings(){
+  if(state.settings.theme === 'light') document.body.classList.add('light'); else document.body.classList.remove('light');
+  volume.value = state.settings.defaultVolume ?? 0.85;
+  if(YTReady && state.ytPlayer) state.ytPlayer.setVolume(Math.round((state.settings.defaultVolume||0.85)*100));
+  repeatBtn.style.opacity = state.isRepeat? 1 : 0.6;
+}
+function initUI(){ renderFavs(); renderPlaylists(); renderQueue(); applySettings(); // load initial recommendations
+  shuffleBtn.click(); showToastOnce();
 }
 initUI();
 
-/* --------------- small utility: when search result items loaded, we map click -> add to queue & play --------------- */
-/* When render functions create cards they call pushAndPlay/addFavorite already */
+/* more helpers */
+function openMoreMenu(track){
+  showModal('Opsi', `<div style="display:flex;flex-direction:column;gap:8px"><button id="openVideoBtn" class="btn">Buka video</button><button id="addFavBtn" class="btn">Toggle Favorit</button><button id="addToPlBtn" class="btn">Tambah ke playlist</button></div>`);
+  document.getElementById('openVideoBtn').onclick = ()=> { openVideo(track); closeModal(); };
+  document.getElementById('addFavBtn').onclick = ()=> { toggleFav(track); closeModal(); };
+  document.getElementById('addToPlBtn').onclick = ()=> { closeModal(); openAddToPlaylistModal(track); };
+}
+
+/* confirm banner */
+function showConfirm(text, cbYes, cbNo){ confirmText.textContent = text; confirmBanner.style.display = 'block'; confirmYes.onclick = ()=>{ confirmBanner.style.display='none'; if(cbYes) cbYes(); }; confirmNo.onclick = ()=>{ confirmBanner.style.display='none'; if(cbNo) cbNo(); }; }
+
+/* util */
+function showToastOnce(){ const shown = load('zura_toast_shown', false); if(!shown){ showToast('Tip: tekan dua kali pada kartu untuk menambah & putar cepat'); save('zura_toast_shown', true); } }
+showToastOnce();
+
+window.addEventListener('beforeunload', ()=> persist());
+window.zura = { state, playIndex, enqueueAndPlay, apiSearch };
+
+/* keyboard shortcuts */
+window.addEventListener('keydown', (e)=>{
+  if(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+  if(e.code === 'Space'){ e.preventDefault(); playBtn.click(); }
+  if(e.key === 'n' || e.key === 'N') nextBtn.click();
+  if(e.key === 'p' || e.key === 'P') prevBtn.click();
+  if(e.key === 'ArrowRight'){ // seek forward 5s
+    if(YTReady && state.ytPlayer && state.ytPlayer.getCurrentTime){ const t = state.ytPlayer.getCurrentTime()+5; state.ytPlayer.seekTo(t,true); }
+  }
+  if(e.key === 'ArrowLeft'){
+    if(YTReady && state.ytPlayer && state.ytPlayer.getCurrentTime){ const t = Math.max(0, state.ytPlayer.getCurrentTime()-5); state.ytPlayer.seekTo(t,true); }
+  }
+  if(e.key === 'ArrowUp'){ volume.value = Math.min(1, parseFloat(volume.value) + 0.05); volume.dispatchEvent(new Event('input')); }
+  if(e.key === 'ArrowDown'){ volume.value = Math.max(0, parseFloat(volume.value) - 0.05); volume.dispatchEvent(new Event('input')); }
+});
+
+/* initial small polish: detect click on card to highlight */
+document.addEventListener('click', (e)=> {
+  const c = e.target.closest('.card');
+  if(c && c.dataset.id){
+    document.querySelectorAll('.card').forEach(x=>x.classList.remove('selected'));
+    c.classList.add('selected');
+  }
+});
+
+/* expose a safe search example on load */
+if(!load('zura_initialized', false)){
+  save('zura_initialized', true);
+  // optional: autopopulate with a set of trending keywords (executed on first load)
+}
+
+/* ensure UI updates when local changes happen */
+new MutationObserver(()=> highlightCurrentPlaying()).observe(document.body, { subtree:true, childList:true });
 
 </script>
 </body>
