@@ -1,90 +1,597 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zura Music - Spotify Clone</title>
-  <link rel="stylesheet" href="assets/style.css">
-  <script src="config.js"></script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Zura Music — Dashboard (Spotify-like)</title>
+<meta name="description" content="Zura Music — Spotify-like dashboard (search YouTube).">
+<!-- Minimal modern font -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0f0f10; --panel:#151515; --muted:#9a9a9a; --accent:#1db954; --card:#171717; --glass: rgba(255,255,255,0.04);
+    --radius:14px; --gap:14px; --text:#eaeaea;
+  }
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;color:var(--text);background:
+    linear-gradient(180deg,#07111a 0%, #071017 50%, #0f0f10 100%);-webkit-font-smoothing:antialiased}
+  /* app layout */
+  .app{display:grid;grid-template-columns:260px 1fr;grid-template-rows:1fr auto;min-height:100vh;gap:0}
+  /* SIDEBAR */
+  .sidebar{padding:20px;background:linear-gradient(180deg,#000 0%, #0b0b0b 100%);border-right:1px solid rgba(255,255,255,0.03)}
+  .brand{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+  .logo-mark{width:46px;height:46px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),#12a84a);color:#001; font-weight:700}
+  .brand h1{font-size:18px;letter-spacing:0.2px;margin:0}
+  .nav{margin-top:8px}
+  .nav button{display:flex;align-items:center;gap:10px;width:100%;background:transparent;border:none;padding:10px;border-radius:10px;color:var(--text);cursor:pointer;font-weight:600}
+  .nav button:hover{background:rgba(255,255,255,0.02)}
+  .nav button.active{background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02)}
+  .sidebar .small{color:var(--muted);font-size:13px;margin-top:18px}
+  .artist-list{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+  .artist-chip{padding:8px 10px;background:var(--glass);border-radius:10px;font-size:13px;color:var(--text);cursor:pointer}
+  .theme-switch{margin-top:18px;padding:10px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.03);cursor:pointer}
+  /* CONTENT */
+  .content{padding:22px;overflow:auto}
+  .top-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .search-box{display:flex;gap:8px;max-width:720px;width:100%}
+  .search-box input{flex:1;padding:12px 14px;border-radius:999px;border:none;background:rgba(255,255,255,0.02);color:var(--text);outline:none}
+  .search-box button{padding:10px 14px;border-radius:999px;border:none;background:var(--accent);font-weight:700;color:#001;cursor:pointer}
+  .section-title{margin-top:18px;font-size:18px;font-weight:700}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-top:14px}
+  /* CARD (no images) */
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px;transition:transform .14s, box-shadow .14s;cursor:pointer}
+  .card:hover{transform:translateY(-6px);box-shadow:0 10px 30px rgba(0,0,0,0.45)}
+  .thumb{height:110px;border-radius:8px;display:grid;place-items:center;background:
+    linear-gradient(135deg,#0b0b0b 0%, rgba(255,255,255,0.015) 100%);border:1px solid rgba(255,255,255,0.02)}
+  .thumb svg{width:56px;height:56px;opacity:0.9}
+  .meta{display:flex;flex-direction:column;gap:4px}
+  .title{font-weight:700;font-size:14px}
+  .sub{font-size:13px;color:var(--muted);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+  .card .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .btn{appearance:none;border:none;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,0.03);color:var(--text);cursor:pointer;font-weight:600}
+  .btn.primary{background:var(--accent);color:#001}
+  /* Now Playing (footer) */
+  .player{grid-column:1/-1;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-top:1px solid rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:space-between;padding:12px 20px;position:sticky;bottom:0}
+  .now-left{display:flex;gap:12px;align-items:center}
+  .now-left .mini{width:56px;height:56px;border-radius:8px;display:grid;place-items:center;background:linear-gradient(135deg,#081010, rgba(255,255,255,0.01));}
+  .now-meta{display:flex;flex-direction:column}
+  .now-meta .t{font-weight:700}
+  .controls{display:flex;align-items:center;gap:8px}
+  .controls button{background:transparent;border:none;color:var(--text);cursor:pointer;font-size:18px;padding:8px;border-radius:8px}
+  .slider{width:420px;display:flex;gap:10px;align-items:center}
+  .slider input[type=range]{width:280px}
+  .muted{color:var(--muted);font-size:13px}
+  /* Queue drawer */
+  .drawer{position:fixed;right:20px;bottom:96px;width:360px;background:linear-gradient(180deg,#0f0f10, #0b0b0b);border-radius:12px;padding:12px;box-shadow:0 12px 40px rgba(0,0,0,0.6)}
+  .drawer h4{margin:0 0 8px 0}
+  .queue-list{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow:auto;padding-right:6px}
+  .q-item{display:flex;gap:10px;align-items:center;padding:8px;border-radius:8px;background:rgba(255,255,255,0.01)}
+  .q-item .dot{width:40px;height:40px;border-radius:6px;display:grid;place-items:center;background:linear-gradient(135deg,#081010, rgba(255,255,255,0.01))}
+  /* responsive */
+  @media (max-width: 980px){ .app{grid-template-columns:80px 1fr} .sidebar{padding:12px} .player{padding:10px} .slider{display:none} }
+  @media (max-width: 640px){
+    .app{grid-template-columns:1fr;grid-template-rows:auto 1fr auto}
+    .sidebar{display:flex;flex-direction:row;gap:12px;align-items:center;padding:12px}
+    .content{padding:12px}
+    .grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+    .player{padding:8px}
+  }
+
+  /* Light mode */
+  body.light{--bg:#f5f6f8;--panel:#fff;--text:#071018;--muted:#6b6f76;--card:#ffffff;--glass: rgba(0,0,0,0.03)}
+  body.light .card{background:var(--card)}
+  /* modal */
+  .modal-back{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;place-items:center}
+  .modal{background:var(--panel);padding:18px;border-radius:10px;width:420px;max-width:92%}
+  .modal h3{margin:0 0 8px 0}
+  .link{color:var(--accent);font-weight:700;cursor:pointer}
+</style>
 </head>
 <body>
-  <div class="app">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <h1 class="logo">Zura Music</h1>
-      <nav>
-        <ul>
-          <li data-page="home" class="active">🏠 Home</li>
-          <li data-page="search">🔍 Search</li>
-          <li data-page="favorites">❤️ Favorites</li>
-          <li data-page="queue">🎵 Queue</li>
-        </ul>
-      </nav>
-      <div class="theme-toggle">
-        <button id="toggleTheme">🌙 / ☀️</button>
+<div class="app" id="appRoot">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" aria-label="Sidebar">
+    <div class="brand">
+      <div class="logo-mark" aria-hidden>
+        <!-- simple music note SVG -->
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="#001">
+          <path d="M9 17a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm0 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2zM19 4v10.5A3.5 3.5 0 0 1 15.5 18c-.2 0-.4 0-.6-.05A3.5 3.5 0 0 1 11 14.5V7h6V4h2z"></path>
+        </svg>
       </div>
-    </aside>
+      <h1>ZURA MUSIC</h1>
+    </div>
 
-    <!-- Main Content -->
-    <main class="main-content">
-      <section id="home" class="page active">
-        <h2>Rekomendasi Hari Ini</h2>
-        <div id="randomMusic" class="card-grid"></div>
-      </section>
+    <nav class="nav" role="navigation" aria-label="Main">
+      <button class="nav-btn active" data-page="home">🏠 Beranda</button>
+      <button class="nav-btn" data-page="search">🔎 Pencarian</button>
+      <button class="nav-btn" data-page="favorites">❤️ Favorit</button>
+      <button class="nav-btn" data-page="queue">🎵 Queue</button>
+    </nav>
 
-      <section id="search" class="page">
-        <h2>Cari Musik</h2>
-        <div class="search-bar">
-          <input type="text" id="searchInput" placeholder="Cari lagu / penyanyi...">
-          <button id="searchBtn">Cari</button>
+    <div class="small">Penyanyi Favorit</div>
+    <div class="artist-list" id="favArtists"></div>
+
+    <button class="theme-switch" id="themeToggle">Toggle Mode</button>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content" id="content">
+    <div class="top-row">
+      <div style="flex:1;max-width:880px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="font-weight:700;font-size:18px">Dashboard Musik</div>
+          <div class="muted" id="subtitle">Mencari di YouTube (API: nvidiabotz)</div>
         </div>
-        <div id="searchResults" class="card-grid"></div>
-      </section>
 
-      <section id="favorites" class="page">
-        <h2>Playlist Favorit</h2>
-        <div id="favoriteList" class="card-grid"></div>
-      </section>
-
-      <section id="queue" class="page">
-        <h2>Daftar Putar (Queue)</h2>
-        <div id="queueList" class="card-grid"></div>
-      </section>
-    </main>
-
-    <!-- Player -->
-    <footer class="player">
-      <div class="track-info">
-        <img id="trackCover" src="" alt="cover">
-        <div>
-          <p id="trackTitle">Pilih lagu...</p>
-          <small id="trackArtist"></small>
+        <div style="margin-top:12px" class="search-box">
+          <div style="display:flex;gap:8px;width:100%">
+            <input id="searchInput" placeholder="Cari lagu, artis, atau judul — tekan Enter atau klik Cari">
+            <button id="searchBtn">Cari</button>
+            <button id="shuffleBtn" class="btn">🔀 Random</button>
+          </div>
         </div>
       </div>
-      <div class="controls">
-        <button id="prevBtn">⏮️</button>
-        <button id="playBtn">▶️</button>
-        <button id="nextBtn">⏭️</button>
-        <button id="repeatBtn">🔁</button>
-      </div>
-      <div class="extra-controls">
-        <input type="range" id="progressBar" value="0" min="0" max="100">
-        <input type="range" id="volumeBar" value="100" min="0" max="100">
-        <button id="downloadBtn">⬇️</button>
-      </div>
-      <audio id="audioPlayer"></audio>
-    </footer>
 
-    <!-- Mini Player for Mobile -->
-    <div class="mini-player" id="miniPlayer">
-      <div class="mini-info">
-        <img id="miniCover" src="" alt="">
-        <p id="miniTitle">Tidak ada lagu</p>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="muted">Mode</div>
+        <button id="miniQueueBtn" class="btn">📃 Queue</button>
       </div>
-      <button id="miniPlayBtn">▶️</button>
+    </div>
+
+    <!-- VIEWS -->
+    <section id="view-home" class="view">
+      <div class="section-title">Rekomendasi</div>
+      <div id="homeGrid" class="grid" aria-live="polite"></div>
+    </section>
+
+    <section id="view-search" class="view" style="display:none">
+      <div class="section-title">Hasil Pencarian</div>
+      <div id="searchGrid" class="grid"></div>
+    </section>
+
+    <section id="view-favorites" class="view" style="display:none">
+      <div class="section-title">Playlist Favorit</div>
+      <div id="favGrid" class="grid"></div>
+    </section>
+
+    <section id="view-queue" class="view" style="display:none">
+      <div class="section-title">Queue</div>
+      <div id="queueGrid" class="grid"></div>
+    </section>
+  </main>
+
+  <!-- PLAYER -->
+  <div class="player" role="region" aria-label="Now playing">
+    <div class="now-left">
+      <div class="mini" id="coverBox" aria-hidden>
+        <!-- SVG cover placeholder (no image files used) -->
+        <svg viewBox="0 0 100 100" width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="100" height="100" rx="8" fill="#0b0b0b"/>
+          <path d="M30 30v40l30-20V30z" fill="#1db954"/>
+        </svg>
+      </div>
+      <div class="now-meta">
+        <div class="t" id="nowTitle">Tidak ada lagu</div>
+        <div class="muted" id="nowArtist">—</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="prevBtn" title="Prev">⏮</button>
+      <button id="playBtn" title="Play/Pause">▶</button>
+      <button id="nextBtn" title="Next">⏭</button>
+      <button id="repeatBtn" title="Repeat">🔁</button>
+      <div class="slider">
+        <span class="muted" id="curTime">0:00</span>
+        <input type="range" id="progress" min="0" max="100" value="0" />
+        <span class="muted" id="durTime">0:00</span>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="muted">Vol</div>
+      <input id="volume" type="range" min="0" max="1" step="0.01" value="0.85" />
+      <button id="downloadBtn" class="btn">⬇️ Download</button>
     </div>
   </div>
+</div>
 
-  <script src="assets/script.js"></script>
+<!-- Queue drawer (hidden by default) -->
+<div class="drawer" id="drawer" style="display:none">
+  <h4>Daftar Putar</h4>
+  <div class="queue-list" id="queueList"></div>
+  <div style="display:flex;gap:8px;margin-top:10px">
+    <button id="clearQueue" class="btn">Hapus Semua</button>
+    <button id="closeDrawer" class="btn">Tutup</button>
+  </div>
+</div>
+
+<!-- Modal (instructions / fallback) -->
+<div class="modal-back" id="modalBack" style="display:none;place-items:center">
+  <div class="modal" role="dialog" aria-modal="true" id="modal">
+    <h3 id="modalTitle">Instruksi Download</h3>
+    <p id="modalText">Jika kamu memiliki server konversi MP3, set `DOWNLOAD_ENDPOINT` pada baris paling atas file ini. Jika tidak, klik <span class="link" id="openVideoLink">buka video</span> untuk menggunakan layanan konversi pihak ketiga.</p>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+      <button id="modalClose" class="btn">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* --------------- CONFIG --------------- */
+/*
+  - SEARCH_API: endpoint pencarian (diberikan user)
+  - DOWNLOAD_ENDPOINT: set ke URL server konversi milikmu, misal:
+      https://my-server.example.com/convert
+    Server harus menerima POST { videoId: '...' } dan mengembalikan JSON { url: 'https://.../file.mp3' }
+  - Jika DOWNLOAD_ENDPOINT === null => tombol Download membuka video YouTube dan menampilkan instruksi modal.
+*/
+const SEARCH_API_BASE = 'https://api.nvidiabotz.xyz/search/youtube?q=';
+const DOWNLOAD_ENDPOINT = null; // <-- ganti dengan URL server-mu jika ada, misal 'https://.../convert'
+
+/* --------------- HELPERS --------------- */
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+function qsel(id) { return document.getElementById(id); }
+function fmtTime(s){
+  if(!s || isNaN(s)) return '0:00';
+  const m = Math.floor(s/60), sec = Math.floor(s%60).toString().padStart(2,'0');
+  return `${m}:${sec}`;
+}
+function safeParse(json, fallback){ try{ return JSON.parse(json); }catch(e){ return fallback; } }
+
+/* --------------- STATE --------------- */
+let state = {
+  view: 'home',
+  queue: JSON.parse(localStorage.getItem('zura_queue') || '[]'),
+  favorites: JSON.parse(localStorage.getItem('zura_favs') || '[]'),
+  favArtists: JSON.parse(localStorage.getItem('zura_artists') || '["Raisa","Tulus","YOASOBI"]'),
+  currentIndex: -1,
+  isRepeat: false
+};
+
+/* --------------- DOM refs --------------- */
+const navBtns = $$('.nav-btn');
+const homeGrid = qsel('homeGrid');
+const searchGrid = qsel('searchGrid');
+const favGrid = qsel('favGrid');
+const queueGrid = qsel('queueGrid');
+const searchInput = qsel('searchInput');
+const searchBtn = qsel('searchBtn');
+const shuffleBtn = qsel('shuffleBtn');
+const playBtn = qsel('playBtn');
+const prevBtn = qsel('prevBtn');
+const nextBtn = qsel('nextBtn');
+const nowTitle = qsel('nowTitle');
+const nowArtist = qsel('nowArtist');
+const progress = qsel('progress');
+const curTime = qsel('curTime');
+const durTime = qsel('durTime');
+const volume = qsel('volume');
+const downloadBtn = qsel('downloadBtn');
+const drawer = qsel('drawer');
+const queueList = qsel('queueList');
+const miniQueueBtn = qsel('miniQueueBtn');
+const clearQueue = qsel('clearQueue');
+const closeDrawer = qsel('closeDrawer');
+const themeToggle = qsel('themeToggle');
+const favArtistsEl = qsel('favArtists');
+const modalBack = qsel('modalBack');
+const openVideoLink = qsel('openVideoLink');
+const modalClose = qsel('modalClose');
+
+/* --------------- AUDIO element --------------- */
+const audio = new Audio();
+audio.crossOrigin = "anonymous";
+audio.preload = "metadata";
+
+/* --------------- UTIL: normalize API item --------------- */
+/*
+  Because we don't have exact docs for the 3rd-party API structure,
+  attempt to be defensive and map commonly used fields.
+*/
+function normalize(item){
+  // item might be { videoId, title, author, duration, thumbnail, url } or others
+  const videoId = item.videoId || item.id || (item.link && extractYouTubeId(item.link)) || (item.url && extractYouTubeId(item.url)) || null;
+  const title = item.title || item.name || (item.snippet && item.snippet.title) || 'Unknown Title';
+  const artist = item.author || item.channel || (item.snippet && item.snippet.channelTitle) || (item.uploader) || 'Unknown Artist';
+  // possible thumbnail fields
+  const thumbnail = item.thumbnail || item.thumbnails?.default || (item.snippet && item.snippet.thumbnails?.medium?.url) || null;
+  // direct audio url if API provides (some APIs return direct stream) — else fallback to youtube watch url
+  const direct = item.audio || item.stream || item.url || item.playUrl || null;
+  const watchUrl = videoId ? `https://www.youtube.com/watch?v=${videoId}` : (item.watch || item.link || direct || null);
+  return {
+    id: videoId || ('id_' + Math.random().toString(36).slice(2,9)),
+    title, artist, thumbnail, direct, watchUrl, raw: item
+  };
+}
+function extractYouTubeId(url){
+  if(!url) return null;
+  try{
+    const u = new URL(url);
+    if(u.hostname.includes('youtu.be')) return u.pathname.slice(1);
+    if(u.searchParams.get('v')) return u.searchParams.get('v');
+  }catch(e){}
+  // fallback regex
+  const m = url.match(/(?:v=|\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+  return m?m[1]:null;
+}
+
+/* --------------- RENDER helpers --------------- */
+function makeCard(track){
+  const el = document.createElement('div');
+  el.className = 'card';
+  el.innerHTML = `
+    <div class="thumb" aria-hidden>
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" rx="8" fill="url(#g)"></rect>
+        <defs>
+          <linearGradient id="g" x1="0" x2="1">
+            <stop offset="0" stop-color="#081010"/>
+            <stop offset="1" stop-color="#071a16"/>
+          </linearGradient>
+        </defs>
+        <path d="M30 30v40l30-20V30z" fill="#1db954"/>
+      </svg>
+    </div>
+    <div class="meta">
+      <div class="title">${escapeHtml(track.title)}</div>
+      <div class="sub">${escapeHtml(track.artist)}</div>
+    </div>
+    <div class="row">
+      <div style="display:flex;gap:8px">
+        <button class="btn primary play">Play</button>
+        <button class="btn add-fav">❤</button>
+      </div>
+      <div>
+        <button class="btn more">⋯</button>
+      </div>
+    </div>
+  `;
+  // actions
+  el.querySelector('.play').addEventListener('click', (e)=>{ e.stopPropagation(); pushAndPlay(track); });
+  el.querySelector('.add-fav').addEventListener('click', (e)=>{ e.stopPropagation(); addFavorite(track); });
+  el.querySelector('.more').addEventListener('click', (e)=>{ e.stopPropagation(); alert('More menu (future): ' + track.title); });
+  el.addEventListener('dblclick', ()=> pushAndPlay(track) );
+  return el;
+}
+function escapeHtml(str){ return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
+
+/* --------------- UI renderers --------------- */
+function renderHome(items = []){
+  homeGrid.innerHTML = '';
+  if(!items.length){ homeGrid.innerHTML = `<div class="muted">Tidak ada rekomendasi. Klik Random untuk memuat.</div>`; return; }
+  items.forEach(it => homeGrid.appendChild(makeCard(it)));
+}
+function renderSearch(items = []){
+  searchGrid.innerHTML = '';
+  if(!items.length) searchGrid.innerHTML = `<div class="muted">Tidak ada hasil.</div>`;
+  items.forEach(it => searchGrid.appendChild(makeCard(it)));
+}
+function renderFavs(){
+  favGrid.innerHTML = '';
+  if(!state.favorites.length) favGrid.innerHTML = `<div class="muted">Belum ada favorit.</div>`;
+  state.favorites.forEach(it => favGrid.appendChild(makeCard(it)));
+  // artists
+  favArtistsEl.innerHTML = '';
+  state.favArtists.forEach(name=>{
+    const btn = document.createElement('div'); btn.className='artist-chip'; btn.textContent=name;
+    btn.addEventListener('click', ()=> doSearch(name));
+    favArtistsEl.appendChild(btn);
+  });
+}
+function renderQueue(){
+  queueGrid.innerHTML = '';
+  if(!state.queue.length) queueGrid.innerHTML = `<div class="muted">Queue kosong.</div>`;
+  state.queue.forEach((it, idx)=>{
+    const c = makeCard(it);
+    // small indicator
+    const num = document.createElement('div'); num.className='dot'; num.textContent = idx+1; num.style.marginRight='8px';
+    const wrapper = document.createElement('div'); wrapper.style.display='flex'; wrapper.style.alignItems='center'; wrapper.style.gap='10px';
+    wrapper.appendChild(num); wrapper.appendChild(c);
+    queueGrid.appendChild(wrapper);
+  });
+  // drawer list
+  queueList.innerHTML = '';
+  state.queue.forEach((t, i)=>{
+    const item = document.createElement('div'); item.className='q-item';
+    item.innerHTML = `<div class="dot">${i+1}</div><div style="flex:1"><div style="font-weight:700">${escapeHtml(t.title)}</div><div class="muted">${escapeHtml(t.artist)}</div></div><div><button class="btn" data-i="${i}">Play</button></div>`;
+    item.querySelector('button').addEventListener('click', ()=>{ playIndex(i); closeDrawer.click(); });
+    queueList.appendChild(item);
+  });
+}
+
+/* --------------- STORAGE --------------- */
+function saveState(){ localStorage.setItem('zura_queue', JSON.stringify(state.queue)); localStorage.setItem('zura_favs', JSON.stringify(state.favorites)); localStorage.setItem('zura_artists', JSON.stringify(state.favArtists)); }
+
+/* --------------- MUSIC controls --------------- */
+function pushAndPlay(track){
+  // Add to queue and play the item at last index
+  state.queue.push(track);
+  saveState(); renderQueue();
+  playIndex(state.queue.length -1);
+}
+function playIndex(i){
+  const track = state.queue[i];
+  if(!track) return;
+  state.currentIndex = i;
+  // choose playable source: direct stream if provided, else watchUrl (won't play audio in <audio> usually)
+  const source = track.direct || track.watchUrl || track.raw?.url || null;
+  if(!source){
+    alert('Tidak menemukan sumber audio untuk track ini.');
+    return;
+  }
+  audio.src = source;
+  audio.play().catch(err=>{
+    // cannot autoplay or source not playable; try opening video
+    console.warn('Tidak bisa autoplay. fallback ke buka video.', err);
+    openVideo(track);
+  });
+  // update now playing
+  nowTitle.textContent = track.title;
+  nowArtist.textContent = track.artist;
+  curTime.textContent = '0:00';
+  durTime.textContent = '0:00';
+  playBtn.textContent = '⏸';
+  // update drawer & UI
+  renderQueue();
+}
+function nextTrack(){
+  if(state.isRepeat) { audio.currentTime = 0; audio.play(); return; }
+  if(state.currentIndex +1 < state.queue.length){ playIndex(state.currentIndex +1); } else { audio.pause(); playBtn.textContent='▶'; }
+}
+function prevTrack(){ if(state.currentIndex > 0) playIndex(state.currentIndex -1); }
+
+/* --------------- FAVORITES --------------- */
+function addFavorite(track){
+  if(!state.favorites.find(f => f.id === track.id)){
+    state.favorites.push(track); saveState();
+    renderFavs();
+  } else {
+    // remove
+    state.favorites = state.favorites.filter(f=>f.id!==track.id); saveState(); renderFavs();
+  }
+}
+
+/* --------------- SEARCH / API --------------- */
+async function apiSearch(q){
+  try{
+    q = q.trim();
+    if(!q) return [];
+    const res = await fetch(SEARCH_API_BASE + encodeURIComponent(q));
+    if(!res.ok) throw new Error('Gagal memanggil API pencarian');
+    const j = await res.json();
+    // Defensive: API may return { result: [...] } or { items: [...] } or [...]
+    const listRaw = (j.result || j.results || j.items || j.data || j) || [];
+    // If top-level keys exist, flatten if necessary
+    const arr = Array.isArray(listRaw) ? listRaw : (listRaw.items || []);
+    const normalized = (arr || []).map(normalize);
+    return normalized;
+  }catch(e){
+    console.error('Search error', e);
+    // Show 505 fallback page
+    window.location.href = '505.html';
+    return [];
+  }
+}
+
+/* --------------- UI actions --------------- */
+navBtns.forEach(b=>{
+  b.addEventListener('click', ()=>{
+    navBtns.forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    const page = b.dataset.page;
+    showView(page);
+  });
+});
+function showView(v){
+  qsel('view-home').style.display = v==='home' ? '' : 'none';
+  qsel('view-search').style.display = v==='search' ? '' : 'none';
+  qsel('view-favorites').style.display = v==='favorites' ? '' : 'none';
+  qsel('view-queue').style.display = v==='queue' ? '' : 'none';
+  state.view = v;
+}
+
+/* Search box */
+searchBtn.addEventListener('click', async ()=>{
+  const q = searchInput.value;
+  qsel('subtitle').textContent = `Hasil pencarian: "${q}"`;
+  const items = await apiSearch(q);
+  renderSearch(items);
+  showView('search');
+});
+searchInput.addEventListener('keydown', async (e)=>{ if(e.key==='Enter'){ searchBtn.click(); } });
+
+shuffleBtn.addEventListener('click', async ()=>{
+  // load random keywords
+  const keywords = ['top hits','best songs','indie','lofi','chart','acoustic','k-pop','j-pop'];
+  const pick = keywords[Math.floor(Math.random() * keywords.length)];
+  const items = await apiSearch(pick);
+  renderHome(items.slice(0, 12));
+  showView('home');
+});
+
+/* play / controls */
+playBtn.addEventListener('click', ()=> {
+  if(audio.paused){ audio.play(); playBtn.textContent='⏸'; } else { audio.pause(); playBtn.textContent='▶'; }
+});
+nextBtn.addEventListener('click', nextTrack);
+prevBtn.addEventListener('click', prevTrack);
+repeatBtn.addEventListener('click', ()=>{ state.isRepeat = !state.isRepeat; repeatBtn.style.opacity = state.isRepeat?1:0.6; });
+
+audio.addEventListener('timeupdate', ()=>{
+  const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
+  progress.value = pct || 0;
+  curTime.textContent = fmtTime(audio.currentTime);
+  durTime.textContent = fmtTime(audio.duration);
+});
+progress.addEventListener('input', ()=> { if(audio.duration) audio.currentTime = (progress.value/100) * audio.duration; });
+volume.addEventListener('input', ()=> audio.volume = volume.value);
+
+/* queue drawer */
+miniQueueBtn.addEventListener('click', ()=> { drawer.style.display = drawer.style.display === 'none' ? '' : 'none'; });
+closeDrawer.addEventListener('click', ()=> drawer.style.display='none');
+clearQueue.addEventListener('click', ()=> { if(confirm('Hapus semua queue?')){ state.queue=[]; saveState(); renderQueue(); } });
+
+/* download button */
+downloadBtn.addEventListener('click', async ()=>{
+  const idx = state.currentIndex;
+  if(idx<0 || !state.queue[idx]){ alert('Pilih lagu terlebih dahulu.'); return; }
+  const track = state.queue[idx];
+  const vidId = track.id || extractYouTubeId(track.watchUrl);
+  if(DOWNLOAD_ENDPOINT){
+    // call server convert endpoint
+    try{
+      const r = await fetch(DOWNLOAD_ENDPOINT, {
+        method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ videoId: vidId })
+      });
+      if(!r.ok) throw new Error('Server konversi gagal');
+      const j = await r.json();
+      const url = j.url || j.download || j.result;
+      if(url) window.open(url, '_blank');
+      else { alert('Server merespon tanpa URL download. Periksa format respon.'); }
+    }catch(e){
+      alert('Gagal meminta server konversi: ' + e.message);
+    }
+  } else {
+    // fallback: open video page and show modal with instructions
+    openVideo(track);
+    showModal('Cara download', 'Sistem saat ini tidak memiliki server konversi. Buka video di tab baru lalu gunakan layanan konverter YouTube→MP3 pihak ketiga atau setup server konversi sendiri. (Jika kamu ingin, aku bisa bantu buat server konversinya.)');
+  }
+});
+
+/* open video helper */
+function openVideo(track){
+  const url = track.watchUrl || track.raw?.link || track.raw?.url;
+  if(url) window.open(url, '_blank');
+  else alert('Tidak ada link video tersedia untuk track ini.');
+}
+
+/* modal */
+function showModal(title, text){
+  qsel('modalTitle').textContent = title || 'Info';
+  qsel('modalText').textContent = text || '';
+  modalBack.style.display = 'grid';
+}
+modalClose.addEventListener('click', ()=> modalBack.style.display='none');
+modalBack.addEventListener('click', (e)=>{ if(e.target === modalBack) modalBack.style.display='none'; });
+openVideoLink.addEventListener('click', ()=> { modalBack.style.display='none'; const idx = state.currentIndex; if(idx>=0) openVideo(state.queue[idx]); });
+
+/* theme toggle */
+themeToggle.addEventListener('click', ()=>{ document.body.classList.toggle('light'); });
+
+/* --------------- BOOTSTRAP: load saved state, render initial UI --------------- */
+function initUI(){
+  // render initial home empty
+  renderHome([]);
+  renderFavs(); renderQueue(); // queue drawer content
+  // attach initial random load
+  shuffleBtn.click();
+}
+initUI();
+
+/* --------------- small utility: when search result items loaded, we map click -> add to queue & play --------------- */
+/* When render functions create cards they call pushAndPlay/addFavorite already */
+
+</script>
 </body>
 </html>
