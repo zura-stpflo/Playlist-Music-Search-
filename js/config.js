@@ -1,1 +1,2 @@
-const API_URL = "https://api-zurabotz.vercel.app/search/spotify?apikey=zuraxd12&q=";
+const API_BASE = "https://api-zurabotz.vercel.app";
+const API_KEY = "zuraxd12";
