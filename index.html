@@ -1,52 +1,81 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Jerome MusicPlayer</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Zura Music - Spotify Clone</title>
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <header class="navbar">
-    <img src="assets/logo.png" alt="Logo" class="logo">
-    <h1>Jerome MusicPlayer</h1>
-    <nav>
-      <button id="favBtn">❤️ Favorit</button>
-    </nav>
-  </header>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">Zura Music</div>
+      <nav>
+        <ul>
+          <li data-page="home">🏠 Home</li>
+          <li data-page="search">🔍 Search</li>
+          <li data-page="favorites">❤️ Favorites</li>
+          <li data-page="queue">🎵 Queue</li>
+        </ul>
+      </nav>
+      <button id="theme-toggle">🌙/☀️</button>
+    </aside>
 
-  <main>
-    <!-- Search -->
-    <section class="search-box">
-      <input type="text" id="searchInput" placeholder="Cari musik...">
-      <button id="searchBtn">Cari</button>
-    </section>
+    <!-- Main Content -->
+    <main id="page-content">
+      <section id="home" class="page active">
+        <h2>Rekomendasi Untukmu</h2>
+        <div id="recommendations" class="grid"></div>
+      </section>
 
-    <!-- Random/Home -->
-    <section class="home">
-      <h2>🎶 Rekomendasi Untukmu</h2>
-      <div class="music-grid" id="randomMusic"></div>
-    </section>
+      <section id="search" class="page">
+        <h2>Cari Musik</h2>
+        <input type="text" id="searchInput" placeholder="Cari lagu atau artis..." />
+        <div id="searchResults" class="grid"></div>
+      </section>
 
-    <!-- Hasil Pencarian -->
-    <section class="results">
-      <h2>🔍 Hasil Pencarian</h2>
-      <div class="music-grid" id="searchResults"></div>
-    </section>
+      <section id="favorites" class="page">
+        <h2>Lagu Favorit</h2>
+        <div id="favoritesList" class="grid"></div>
+      </section>
 
-    <!-- Player -->
-    <section class="player" id="player">
-      <img id="cover" src="" alt="cover">
-      <div class="info">
-        <h3 id="title">Judul Lagu</h3>
-        <p id="artist">Penyanyi</p>
+      <section id="queue" class="page">
+        <h2>Daftar Putar (Queue)</h2>
+        <ul id="queueList"></ul>
+      </section>
+    </main>
+  </div>
+
+  <!-- Now Playing -->
+  <footer class="player">
+    <div class="player-left">
+      <img id="cover" src="assets/default.jpg" alt="cover" />
+      <div class="song-info">
+        <p id="song-title">Tidak ada lagu</p>
+        <small id="song-artist">-</small>
       </div>
-      <audio id="audio" controls></audio>
-      <button id="downloadBtn">⬇️ Download MP3</button>
-      <button id="favAddBtn">+ Favorit</button>
-    </section>
-  </main>
+    </div>
+    <div class="player-center">
+      <button id="prev">⏮</button>
+      <button id="play">▶</button>
+      <button id="next">⏭</button>
+      <input type="range" id="seek" value="0" min="0" max="100" />
+    </div>
+    <div class="player-right">
+      <button id="repeat">🔁</button>
+      <input type="range" id="volume" min="0" max="1" step="0.1" value="1" />
+      <button id="download">⬇️</button>
+    </div>
+  </footer>
 
-  <script type="module" src="script.js"></script>
+  <!-- Mini Player Mobile -->
+  <div class="mini-player" id="miniPlayer">
+    <span id="miniTitle">Tidak ada lagu</span>
+    <button id="miniPlay">▶</button>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/script.js"></script>
 </body>
 </html>
